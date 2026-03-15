@@ -6,6 +6,7 @@ use App\Domain\Models\Asignacion;
 use App\Domain\Repositories\AsignacionRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class AsignacionEloquentRepository implements AsignacionRepositoryInterface
 {
@@ -86,13 +87,27 @@ class AsignacionEloquentRepository implements AsignacionRepositoryInterface
     public function getConteosPorMesPorAlumnoHasta(Carbon $fecha): array
     {
         $hasta = $fecha->toDateString();
+        $driver = DB::connection()->getDriverName();
+
+        if ($driver === 'pgsql') {
+            $selectFruta = 'alumno_fruta_id as alumno_id, EXTRACT(YEAR FROM fecha)::integer as anio, EXTRACT(MONTH FROM fecha)::integer as mes, count(*) as total';
+            $groupFruta = 'alumno_fruta_id, EXTRACT(YEAR FROM fecha), EXTRACT(MONTH FROM fecha)';
+            $selectElab = 'alumno_elaboracion_id as alumno_id, EXTRACT(YEAR FROM fecha)::integer as anio, EXTRACT(MONTH FROM fecha)::integer as mes, count(*) as total';
+            $groupElab = 'alumno_elaboracion_id, EXTRACT(YEAR FROM fecha), EXTRACT(MONTH FROM fecha)';
+        } else {
+            $selectFruta = 'alumno_fruta_id as alumno_id, YEAR(fecha) as anio, MONTH(fecha) as mes, count(*) as total';
+            $groupFruta = 'alumno_fruta_id, YEAR(fecha), MONTH(fecha)';
+            $selectElab = 'alumno_elaboracion_id as alumno_id, YEAR(fecha) as anio, MONTH(fecha) as mes, count(*) as total';
+            $groupElab = 'alumno_elaboracion_id, YEAR(fecha), MONTH(fecha)';
+        }
+
         $fruta = Asignacion::where('fecha', '<=', $hasta)
-            ->selectRaw('alumno_fruta_id as alumno_id, YEAR(fecha) as anio, MONTH(fecha) as mes, count(*) as total')
-            ->groupByRaw('alumno_fruta_id, YEAR(fecha), MONTH(fecha)')
+            ->selectRaw($selectFruta)
+            ->groupByRaw($groupFruta)
             ->get();
         $elab = Asignacion::where('fecha', '<=', $hasta)
-            ->selectRaw('alumno_elaboracion_id as alumno_id, YEAR(fecha) as anio, MONTH(fecha) as mes, count(*) as total')
-            ->groupByRaw('alumno_elaboracion_id, YEAR(fecha), MONTH(fecha)')
+            ->selectRaw($selectElab)
+            ->groupByRaw($groupElab)
             ->get();
 
         $out = [];
