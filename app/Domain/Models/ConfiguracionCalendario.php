@@ -11,11 +11,13 @@ class ConfiguracionCalendario extends Model
     protected $fillable = [
         'anio',
         'fecha_inicio_clases',
+        'fecha_fin_clases',
     ];
 
     protected $casts = [
         'anio' => 'integer',
         'fecha_inicio_clases' => 'date',
+        'fecha_fin_clases' => 'date',
     ];
 }
 

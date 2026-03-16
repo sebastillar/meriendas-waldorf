@@ -87,11 +87,17 @@ class AsignacionEloquentRepository implements AsignacionRepositoryInterface
 
     public function getConteosPorMesPorAlumnoHasta(Carbon $fecha): array
     {
-        $hasta = $fecha->toDateString();
         $config = ConfiguracionCalendario::where('anio', $fecha->year)->first();
         $desde = $config && $config->fecha_inicio_clases
             ? $config->fecha_inicio_clases->toDateString()
             : '1900-01-01';
+        $hasta = $fecha->toDateString();
+        if ($config && $config->fecha_fin_clases) {
+            $fin = $config->fecha_fin_clases->toDateString();
+            if ($fin < $hasta) {
+                $hasta = $fin;
+            }
+        }
         $driver = DB::connection()->getDriverName();
 
         if ($driver === 'pgsql') {

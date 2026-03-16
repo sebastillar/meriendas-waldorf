@@ -29,7 +29,15 @@ class ResumenMensualService
         } else {
             $desde = $desdeMes;
         }
-        $hasta = $desde->copy()->endOfMonth();
+        $finMes = $desdeMes->copy()->endOfMonth();
+        if ($config && $config->fecha_fin_clases && $config->fecha_fin_clases->lt($desde)) {
+            return 0;
+        }
+        if ($config && $config->fecha_fin_clases && $config->fecha_fin_clases->lt($finMes)) {
+            $hasta = $config->fecha_fin_clases->copy()->startOfDay();
+        } else {
+            $hasta = $finMes;
+        }
         $fechasSinClase = $this->diaSinClaseRepository->fechasEntre($desde, $hasta)
             ->map(fn ($d) => $d->toDateString())->flip();
 

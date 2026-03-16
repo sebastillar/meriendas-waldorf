@@ -34,7 +34,13 @@ class GeneradorAgendaService
         } else {
             $desde = $desdeMes;
         }
-        $hasta = $desde->copy()->endOfMonth();
+        $hastaMes = $desdeMes->copy()->endOfMonth();
+        if ($config && $config->fecha_fin_clases) {
+            $finClasesCarbon = $config->fecha_fin_clases->copy()->startOfDay();
+            $hasta = $finClasesCarbon->lessThan($hastaMes) ? $finClasesCarbon : $hastaMes;
+        } else {
+            $hasta = $hastaMes;
+        }
         $diasLectivos = $this->obtenerDiasLectivos($desde, $hasta);
         if ($diasLectivos->isEmpty()) {
             return 0;

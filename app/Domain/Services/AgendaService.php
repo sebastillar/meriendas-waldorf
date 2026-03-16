@@ -26,7 +26,13 @@ class AgendaService
         if ($config && $config->fecha_inicio_clases && $config->fecha_inicio_clases->gt($inicio)) {
             $inicio = $config->fecha_inicio_clases->copy()->startOfDay();
         }
+        if ($config && $config->fecha_fin_clases && $config->fecha_fin_clases->lt($inicio)) {
+            return [];
+        }
         $fin = $inicio->copy()->addDays(6);
+        if ($config && $config->fecha_fin_clases && $config->fecha_fin_clases->lt($fin)) {
+            $fin = $config->fecha_fin_clases->copy()->startOfDay();
+        }
         $filas = $this->construirAgenda($inicio, $fin);
         return $alumnoId !== null ? $this->filtrarFilasPorAlumno($filas, $alumnoId) : $filas;
     }
@@ -42,7 +48,15 @@ class AgendaService
         if ($config && $config->fecha_inicio_clases && $config->fecha_inicio_clases->gt($inicio)) {
             $inicio = $config->fecha_inicio_clases->copy()->startOfDay();
         }
-        $fin = $inicio->copy()->endOfMonth();
+        $finMes = Carbon::createFromDate($anio, $mes, 1)->endOfMonth();
+        if ($config && $config->fecha_fin_clases && $config->fecha_fin_clases->lt($inicio)) {
+            return [];
+        }
+        if ($config && $config->fecha_fin_clases && $config->fecha_fin_clases->lt($finMes)) {
+            $fin = $config->fecha_fin_clases->copy()->startOfDay();
+        } else {
+            $fin = $finMes;
+        }
         $filas = $this->construirAgenda($inicio, $fin);
         return $alumnoId !== null ? $this->filtrarFilasPorAlumno($filas, $alumnoId) : $filas;
     }

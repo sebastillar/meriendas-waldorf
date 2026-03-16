@@ -96,6 +96,16 @@
                             </li>
                                                                         </ul>
                             </ul>
+                    <ul id="tocify-header-calendario-escolar" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="calendario-escolar">
+                    <a href="#calendario-escolar">Calendario escolar</a>
+                </li>
+                                    <ul id="tocify-subheader-calendario-escolar" class="tocify-subheader">
+                                                    <li class="tocify-item level-2" data-unique="calendario-escolar-GETapi-calendario--anio-">
+                                <a href="#calendario-escolar-GETapi-calendario--anio-">Configuración de calendario por año</a>
+                            </li>
+                                                                        </ul>
+                            </ul>
                     <ul id="tocify-header-estadisticas" class="tocify-header">
                 <li class="tocify-item level-1" data-unique="estadisticas">
                     <a href="#estadisticas">Estadísticas</a>
@@ -115,7 +125,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: March 15, 2026</li>
+        <li>Last updated: March 16, 2026</li>
     </ul>
 </div>
 
@@ -190,82 +200,82 @@ access-control-allow-origin: *
 <code class="language-json" style="max-height: 300px;">{
     &quot;data&quot;: [
         {
-            &quot;fecha&quot;: &quot;2026-03-09&quot;,
+            &quot;fecha&quot;: &quot;2026-03-16&quot;,
             &quot;dia&quot;: &quot;lunes&quot;,
             &quot;cereal&quot;: &quot;Arroz&quot;,
             &quot;fruta&quot;: {
-                &quot;id&quot;: 5,
-                &quot;nombre&quot;: &quot;Gael&quot;
-            },
-            &quot;elaboracion&quot;: {
-                &quot;id&quot;: 6,
-                &quot;nombre&quot;: &quot;Joaquin&quot;
-            },
-            &quot;es_feriado&quot;: false,
-            &quot;etiqueta_feriado&quot;: &quot;&quot;
-        },
-        {
-            &quot;fecha&quot;: &quot;2026-03-10&quot;,
-            &quot;dia&quot;: &quot;martes&quot;,
-            &quot;cereal&quot;: &quot;Cebada&quot;,
-            &quot;fruta&quot;: {
-                &quot;id&quot;: 9,
-                &quot;nombre&quot;: &quot;Lorenzo&quot;
-            },
-            &quot;elaboracion&quot;: {
                 &quot;id&quot;: 2,
                 &quot;nombre&quot;: &quot;Demi&aacute;n&quot;
             },
+            &quot;elaboracion&quot;: {
+                &quot;id&quot;: 12,
+                &quot;nombre&quot;: &quot;Renato&quot;
+            },
             &quot;es_feriado&quot;: false,
             &quot;etiqueta_feriado&quot;: &quot;&quot;
         },
         {
-            &quot;fecha&quot;: &quot;2026-03-11&quot;,
-            &quot;dia&quot;: &quot;mi&eacute;rcoles&quot;,
-            &quot;cereal&quot;: &quot;Mijo&quot;,
+            &quot;fecha&quot;: &quot;2026-03-17&quot;,
+            &quot;dia&quot;: &quot;martes&quot;,
+            &quot;cereal&quot;: &quot;Cebada&quot;,
             &quot;fruta&quot;: {
-                &quot;id&quot;: 3,
-                &quot;nombre&quot;: &quot;Emiliano&quot;
+                &quot;id&quot;: 8,
+                &quot;nombre&quot;: &quot;Lisa&quot;
             },
             &quot;elaboracion&quot;: {
-                &quot;id&quot;: 10,
-                &quot;nombre&quot;: &quot;Olivia&quot;
-            },
-            &quot;es_feriado&quot;: false,
-            &quot;etiqueta_feriado&quot;: &quot;&quot;
-        },
-        {
-            &quot;fecha&quot;: &quot;2026-03-12&quot;,
-            &quot;dia&quot;: &quot;jueves&quot;,
-            &quot;cereal&quot;: &quot;Centeno&quot;,
-            &quot;fruta&quot;: {
-                &quot;id&quot;: 11,
-                &quot;nombre&quot;: &quot;Pedro&quot;
-            },
-            &quot;elaboracion&quot;: {
-                &quot;id&quot;: 7,
-                &quot;nombre&quot;: &quot;Julieta&quot;
-            },
-            &quot;es_feriado&quot;: false,
-            &quot;etiqueta_feriado&quot;: &quot;&quot;
-        },
-        {
-            &quot;fecha&quot;: &quot;2026-03-13&quot;,
-            &quot;dia&quot;: &quot;viernes&quot;,
-            &quot;cereal&quot;: &quot;Avena&quot;,
-            &quot;fruta&quot;: {
                 &quot;id&quot;: 4,
                 &quot;nombre&quot;: &quot;Felipe&quot;
             },
+            &quot;es_feriado&quot;: false,
+            &quot;etiqueta_feriado&quot;: &quot;&quot;
+        },
+        {
+            &quot;fecha&quot;: &quot;2026-03-18&quot;,
+            &quot;dia&quot;: &quot;mi&eacute;rcoles&quot;,
+            &quot;cereal&quot;: &quot;Mijo&quot;,
+            &quot;fruta&quot;: {
+                &quot;id&quot;: 6,
+                &quot;nombre&quot;: &quot;Joaquin&quot;
+            },
             &quot;elaboracion&quot;: {
-                &quot;id&quot;: 1,
-                &quot;nombre&quot;: &quot;Bruna&quot;
+                &quot;id&quot;: 5,
+                &quot;nombre&quot;: &quot;Gael&quot;
             },
             &quot;es_feriado&quot;: false,
             &quot;etiqueta_feriado&quot;: &quot;&quot;
         },
         {
-            &quot;fecha&quot;: &quot;2026-03-14&quot;,
+            &quot;fecha&quot;: &quot;2026-03-19&quot;,
+            &quot;dia&quot;: &quot;jueves&quot;,
+            &quot;cereal&quot;: &quot;Centeno&quot;,
+            &quot;fruta&quot;: {
+                &quot;id&quot;: 1,
+                &quot;nombre&quot;: &quot;Bruna&quot;
+            },
+            &quot;elaboracion&quot;: {
+                &quot;id&quot;: 9,
+                &quot;nombre&quot;: &quot;Lorenzo&quot;
+            },
+            &quot;es_feriado&quot;: false,
+            &quot;etiqueta_feriado&quot;: &quot;&quot;
+        },
+        {
+            &quot;fecha&quot;: &quot;2026-03-20&quot;,
+            &quot;dia&quot;: &quot;viernes&quot;,
+            &quot;cereal&quot;: &quot;Avena&quot;,
+            &quot;fruta&quot;: {
+                &quot;id&quot;: 10,
+                &quot;nombre&quot;: &quot;Olivia&quot;
+            },
+            &quot;elaboracion&quot;: {
+                &quot;id&quot;: 3,
+                &quot;nombre&quot;: &quot;Emiliano&quot;
+            },
+            &quot;es_feriado&quot;: false,
+            &quot;etiqueta_feriado&quot;: &quot;&quot;
+        },
+        {
+            &quot;fecha&quot;: &quot;2026-03-21&quot;,
             &quot;dia&quot;: &quot;s&aacute;bado&quot;,
             &quot;cereal&quot;: &quot;&quot;,
             &quot;fruta&quot;: [],
@@ -274,7 +284,7 @@ access-control-allow-origin: *
             &quot;etiqueta_feriado&quot;: &quot;Fin de semana&quot;
         },
         {
-            &quot;fecha&quot;: &quot;2026-03-15&quot;,
+            &quot;fecha&quot;: &quot;2026-03-22&quot;,
             &quot;dia&quot;: &quot;domingo&quot;,
             &quot;cereal&quot;: &quot;&quot;,
             &quot;fruta&quot;: [],
@@ -409,6 +419,29 @@ fetch(url, {
 </span>
 
 <span id="example-responses-GETapi-agenda-semana-csv">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary style="cursor: pointer;">
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">content-type: text/csv; charset=UTF-8
+content-disposition: attachment; filename=agenda_semana.csv
+cache-control: no-cache, private
+access-control-allow-origin: *
+ </code></pre></details>         <pre>
+
+<code class="language-json" style="max-height: 300px;">﻿Fecha;D&iacute;a;Cereal;Fruta;Elaboraci&oacute;n;&quot;Es feriado&quot;
+2026-03-16;lunes;Arroz;Demi&aacute;n;Renato;No
+2026-03-17;martes;Cebada;Lisa;Felipe;No
+2026-03-18;mi&eacute;rcoles;Mijo;Joaquin;Gael;No
+2026-03-19;jueves;Centeno;Bruna;Lorenzo;No
+2026-03-20;viernes;Avena;Olivia;Emiliano;No
+2026-03-21;s&aacute;bado;;;;S&iacute;
+2026-03-22;domingo;;;;S&iacute;
+</code>
+ </pre>
     </span>
 <span id="execution-results-GETapi-agenda-semana-csv" hidden>
     <blockquote>Received response<span
@@ -541,30 +574,6 @@ access-control-allow-origin: *
 
 <code class="language-json" style="max-height: 300px;">{
     &quot;data&quot;: [
-        {
-            &quot;fecha&quot;: &quot;2026-03-01&quot;,
-            &quot;dia&quot;: &quot;domingo&quot;,
-            &quot;cereal&quot;: &quot;&quot;,
-            &quot;fruta&quot;: [],
-            &quot;elaboracion&quot;: [],
-            &quot;es_feriado&quot;: true,
-            &quot;etiqueta_feriado&quot;: &quot;Fin de semana&quot;
-        },
-        {
-            &quot;fecha&quot;: &quot;2026-03-02&quot;,
-            &quot;dia&quot;: &quot;lunes&quot;,
-            &quot;cereal&quot;: &quot;Arroz&quot;,
-            &quot;fruta&quot;: {
-                &quot;id&quot;: 6,
-                &quot;nombre&quot;: &quot;Joaquin&quot;
-            },
-            &quot;elaboracion&quot;: {
-                &quot;id&quot;: 5,
-                &quot;nombre&quot;: &quot;Gael&quot;
-            },
-            &quot;es_feriado&quot;: false,
-            &quot;etiqueta_feriado&quot;: &quot;&quot;
-        },
         {
             &quot;fecha&quot;: &quot;2026-03-03&quot;,
             &quot;dia&quot;: &quot;martes&quot;,
@@ -1086,6 +1095,51 @@ fetch(url, {
 </span>
 
 <span id="example-responses-GETapi-agenda-mes-csv">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary style="cursor: pointer;">
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">content-type: text/csv; charset=UTF-8
+content-disposition: attachment; filename=agenda_mes_2026_3.csv
+cache-control: no-cache, private
+access-control-allow-origin: *
+ </code></pre></details>         <pre>
+
+<code class="language-json" style="max-height: 300px;">﻿Fecha;D&iacute;a;Cereal;Fruta;Elaboraci&oacute;n;&quot;Es feriado&quot;
+2026-03-03;martes;Cebada;Bruna;Lorenzo;No
+2026-03-04;mi&eacute;rcoles;Mijo;Olivia;Emiliano;No
+2026-03-05;jueves;Centeno;Julieta;Lisa;No
+2026-03-06;viernes;Avena;Renato;Pedro;No
+2026-03-07;s&aacute;bado;;;;S&iacute;
+2026-03-08;domingo;;;;S&iacute;
+2026-03-09;lunes;Arroz;Gael;Joaquin;No
+2026-03-10;martes;Cebada;Lorenzo;Demi&aacute;n;No
+2026-03-11;mi&eacute;rcoles;Mijo;Emiliano;Olivia;No
+2026-03-12;jueves;Centeno;Pedro;Julieta;No
+2026-03-13;viernes;Avena;Felipe;Bruna;No
+2026-03-14;s&aacute;bado;;;;S&iacute;
+2026-03-15;domingo;;;;S&iacute;
+2026-03-16;lunes;Arroz;Demi&aacute;n;Renato;No
+2026-03-17;martes;Cebada;Lisa;Felipe;No
+2026-03-18;mi&eacute;rcoles;Mijo;Joaquin;Gael;No
+2026-03-19;jueves;Centeno;Bruna;Lorenzo;No
+2026-03-20;viernes;Avena;Olivia;Emiliano;No
+2026-03-21;s&aacute;bado;;;;S&iacute;
+2026-03-22;domingo;;;;S&iacute;
+2026-03-23;lunes;Arroz;Julieta;Lisa;No
+2026-03-24;martes;Cebada;Renato;Pedro;No
+2026-03-25;mi&eacute;rcoles;Mijo;Gael;Joaquin;No
+2026-03-26;jueves;Centeno;Lorenzo;Demi&aacute;n;No
+2026-03-27;viernes;Avena;Bruna;Felipe;No
+2026-03-28;s&aacute;bado;;;;S&iacute;
+2026-03-29;domingo;;;;S&iacute;
+2026-03-30;lunes;;;;S&iacute;
+2026-03-31;martes;;;;S&iacute;
+</code>
+ </pre>
     </span>
 <span id="execution-results-GETapi-agenda-mes-csv" hidden>
     <blockquote>Received response<span
@@ -1362,6 +1416,150 @@ Must be one of:
 <p>Motivo del intercambio (opcional, máx. 500 caracteres). validation.max.</p>
         </div>
         </form>
+
+                <h1 id="calendario-escolar">Calendario escolar</h1>
+
+    <p>Endpoints para obtener configuración de calendario (inicio/fin de clases y días sin clase).</p>
+
+                                <h2 id="calendario-escolar-GETapi-calendario--anio-">Configuración de calendario por año</h2>
+
+<p>
+</p>
+
+<p>Devuelve <code>fecha_inicio_clases</code>, <code>fecha_fin_clases</code> y los <code>dias_sin_clase</code> del año indicado.</p>
+
+<span id="example-requests-GETapi-calendario--anio-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost/api/calendario/consequatur" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/calendario/consequatur"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-calendario--anio-">
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary style="cursor: pointer;">
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+content-type: application/json
+access-control-allow-origin: *
+ </code></pre></details>         <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;Server Error&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-calendario--anio-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-calendario--anio-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-calendario--anio-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-calendario--anio-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-calendario--anio-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-calendario--anio-" data-method="GET"
+      data-path="api/calendario/{anio}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-calendario--anio-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-calendario--anio-"
+                    onclick="tryItOut('GETapi-calendario--anio-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-calendario--anio-"
+                    onclick="cancelTryOut('GETapi-calendario--anio-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-calendario--anio-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/calendario/{anio}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-calendario--anio-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-calendario--anio-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>anio</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="anio"                data-endpoint="GETapi-calendario--anio-"
+               value="consequatur"
+               data-component="url">
+    <br>
+<p>Example: <code>consequatur</code></p>
+            </div>
+                    </form>
 
                 <h1 id="estadisticas">Estadísticas</h1>
 

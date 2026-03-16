@@ -39,6 +39,8 @@ class CalendarioEscolarResource extends Resource
                 Forms\Components\DatePicker::make('fecha_inicio_clases')
                     ->label('Fecha de inicio de clases')
                     ->required(),
+                Forms\Components\DatePicker::make('fecha_fin_clases')
+                    ->label('Fecha de fin de clases'),
             ]);
     }
 
@@ -52,6 +54,10 @@ class CalendarioEscolarResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('fecha_inicio_clases')
                     ->label('Inicio de clases')
+                    ->date('d/m/Y')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('fecha_fin_clases')
+                    ->label('Fin de clases')
                     ->date('d/m/Y')
                     ->sortable(),
             ])
