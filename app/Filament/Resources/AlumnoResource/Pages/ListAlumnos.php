@@ -12,8 +12,8 @@ class ListAlumnos extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\CreateAction::make(),
-        ];
+        // No se permite crear alumnos desde este listado.
+        // La creación se hace desde el RelationManager de Familia.
+        return [];
     }
 }
