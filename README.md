@@ -63,13 +63,6 @@ El archivo `.env` en la raíz del proyecto define la configuración. Además de 
 | `MERIENDAS_DIA_RECALCULO_ASIGNACIONES` | Día del mes (1–28) en que se recalculan las asignaciones del mes siguiente | `25`              |
 | `MERIENDAS_MISMO_ALUMNO_FRUTA_ELAB`    | Permitir mismo alumno fruta y elaboración el mismo día (raro)               | `false`           |
 
-#### Meriendas – Notificaciones por correo
-
-| Variable                    | Descripción                                              | Valor por defecto |
-|-----------------------------|----------------------------------------------------------|-------------------|
-| `MERIENDAS_NOTIFICAR_DIAS_ANTES` | Días de antelación para el recordatorio de merienda      | `1`               |
-| `MERIENDAS_NOTIFICAR_HORA`  | Hora del día para enviar recordatorios (formato 24h)      | `08:00`           |
-
 #### Recordatorios (cron)
 
 | Variable             | Descripción                                           | Valor por defecto |
@@ -101,8 +94,9 @@ Ajustar `/ruta/al/proyecto` a la raíz de esta aplicación.
 
 | Tarea                         | Frecuencia        | Descripción |
 |------------------------------|-------------------|-------------|
-| Recordatorios de merienda    | Diario a la hora configurada (`RECORDATORIO_HORA`) | Envía recordatorios a las familias que tienen merienda al día siguiente. |
+| Recordatorios de merienda    | Cada 12 horas (`08:00` y `20:00` por defecto) | Prepara y envía notificaciones de merienda para el día siguiente (y el lunes si hoy es viernes), con hasta 2 intentos por día. |
 | Generar mes siguiente        | Un día al mes     | El día configurado (`MERIENDAS_DIA_RECALCULO_ASIGNACIONES`, por defecto **25**) a las 00:00 se recalculan y generan las asignaciones del **mes siguiente**. |
+| Limpiar notificaciones       | Semanal (lunes 03:00) | Elimina registros de notificaciones de merienda de semanas anteriores, manteniendo solo la semana actual. |
 
 Si no se ejecuta el cron, no se enviarán recordatorios ni se generarán automáticamente las asignaciones del mes siguiente.
 

@@ -10,9 +10,13 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::job(EnviarRecordatoriosMerienda::class)
-    ->dailyAt(config('recordatorio.hora', '18:00'))
+    ->twiceDaily(8, 20)
     ->name('recordatorios-merienda');
 
 Schedule::command('meriendas:generar-mes-siguiente')
     ->monthlyOn(config('meriendas.asignacion.dia_recalculo_mes_siguiente', 25), '00:00')
     ->name('generar-asignaciones-mes-siguiente');
+
+Schedule::command('meriendas:limpiar-notificaciones')
+    ->weeklyOn(1, '03:00')
+    ->name('limpiar-notificaciones-merienda');
