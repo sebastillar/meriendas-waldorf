@@ -105,11 +105,17 @@ class AsignacionEloquentRepository implements AsignacionRepositoryInterface
             $groupFruta = 'alumno_fruta_id, EXTRACT(YEAR FROM fecha), EXTRACT(MONTH FROM fecha)';
             $selectElab = 'alumno_elaboracion_id as alumno_id, EXTRACT(YEAR FROM fecha)::integer as anio, EXTRACT(MONTH FROM fecha)::integer as mes, count(*) as total';
             $groupElab = 'alumno_elaboracion_id, EXTRACT(YEAR FROM fecha), EXTRACT(MONTH FROM fecha)';
-        } else {
+        } elseif ($driver === 'mysql') {
             $selectFruta = 'alumno_fruta_id as alumno_id, YEAR(fecha) as anio, MONTH(fecha) as mes, count(*) as total';
             $groupFruta = 'alumno_fruta_id, YEAR(fecha), MONTH(fecha)';
             $selectElab = 'alumno_elaboracion_id as alumno_id, YEAR(fecha) as anio, MONTH(fecha) as mes, count(*) as total';
             $groupElab = 'alumno_elaboracion_id, YEAR(fecha), MONTH(fecha)';
+        } else {
+            // SQLite (entorno de testing) u otros drivers: usar strftime para año/mes
+            $selectFruta = 'alumno_fruta_id as alumno_id, CAST(strftime(\'%Y\', fecha) AS INTEGER) as anio, CAST(strftime(\'%m\', fecha) AS INTEGER) as mes, count(*) as total';
+            $groupFruta = 'alumno_fruta_id, strftime(\'%Y\', fecha), strftime(\'%m\', fecha)';
+            $selectElab = 'alumno_elaboracion_id as alumno_id, CAST(strftime(\'%Y\', fecha) AS INTEGER) as anio, CAST(strftime(\'%m\', fecha) AS INTEGER) as mes, count(*) as total';
+            $groupElab = 'alumno_elaboracion_id, strftime(\'%Y\', fecha), strftime(\'%m\', fecha)';
         }
 
         $fruta = Asignacion::whereBetween('fecha', [$desde, $hasta])

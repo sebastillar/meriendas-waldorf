@@ -2,10 +2,14 @@
 
 namespace App\Domain\Models;
 
+use Database\Factories\ConfiguracionCalendarioFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ConfiguracionCalendario extends Model
 {
+    use HasFactory;
+
     protected $table = 'configuracion_calendario';
 
     protected $fillable = [
@@ -19,5 +23,9 @@ class ConfiguracionCalendario extends Model
         'fecha_inicio_clases' => 'date',
         'fecha_fin_clases' => 'date',
     ];
-}
 
+    protected static function newFactory(): ConfiguracionCalendarioFactory
+    {
+        return ConfiguracionCalendarioFactory::new();
+    }
+}

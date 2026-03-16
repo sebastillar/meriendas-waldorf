@@ -1,0 +1,22 @@
+<?php
+
+namespace Tests\Feature;
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class ApiEstadisticasControllerTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_resumen_endpoint_returns_ok_and_structure()
+    {
+        $response = $this->getJson('/api/estadisticas/resumen');
+
+        $response->assertOk();
+        $response->assertJsonStructure([
+            'data',
+        ]);
+    }
+}
+

@@ -2,12 +2,15 @@
 
 namespace App\Domain\Models;
 
+use Database\Factories\AsignacionFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Asignacion extends Model
 {
+    use HasFactory;
     protected $table = 'asignaciones';
 
     protected $fillable = [
@@ -21,6 +24,11 @@ class Asignacion extends Model
     protected $casts = [
         'fecha' => 'date',
     ];
+
+    protected static function newFactory(): AsignacionFactory
+    {
+        return AsignacionFactory::new();
+    }
 
     public function alumnoFruta(): BelongsTo
     {
