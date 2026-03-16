@@ -116,6 +116,16 @@
                             </li>
                                                                         </ul>
                             </ul>
+                    <ul id="tocify-header-recolectas" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="recolectas">
+                    <a href="#recolectas">Recolectas</a>
+                </li>
+                                    <ul id="tocify-subheader-recolectas" class="tocify-subheader">
+                                                    <li class="tocify-item level-2" data-unique="recolectas-GETapi-recolectas-cumpleanos-mes-actual">
+                                <a href="#recolectas-GETapi-recolectas-cumpleanos-mes-actual">Colectas del mes actual</a>
+                            </li>
+                                                                        </ul>
+                            </ul>
             </div>
 
     <ul class="toc-footer" id="toc-footer">
@@ -1878,6 +1888,186 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="GETapi-estadisticas-resumen"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        </form>
+
+                <h1 id="recolectas">Recolectas</h1>
+
+    <p>Endpoints para consultar el estado de colectas de cumpleaños.</p>
+
+                                <h2 id="recolectas-GETapi-recolectas-cumpleanos-mes-actual">Colectas del mes actual</h2>
+
+<p>
+</p>
+
+<p>Devuelve la lista de colectas cuyo cumpleaños ocurre en el mes actual, con su estado y progreso.</p>
+
+<span id="example-requests-GETapi-recolectas-cumpleanos-mes-actual">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost/api/recolectas/cumpleanos/mes-actual" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/recolectas/cumpleanos/mes-actual"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-recolectas-cumpleanos-mes-actual">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary style="cursor: pointer;">
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+content-type: application/json
+access-control-allow-origin: *
+ </code></pre></details>         <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;data&quot;: [
+        {
+            &quot;estado&quot;: &quot;activa&quot;,
+            &quot;fecha_cumpleanos&quot;: &quot;2026-03-29&quot;,
+            &quot;alumno_beneficiario&quot;: {
+                &quot;id&quot;: 4,
+                &quot;nombre&quot;: &quot;Felipe&quot;
+            },
+            &quot;familia_beneficiaria&quot;: {
+                &quot;id&quot;: 4,
+                &quot;nombre&quot;: &quot;Felipe&quot;
+            },
+            &quot;familia_recolectora&quot;: {
+                &quot;id&quot;: 2,
+                &quot;nombre&quot;: &quot;Demi&aacute;n&quot;,
+                &quot;banco&quot;: &quot;Prueba&quot;,
+                &quot;numero_cuenta&quot;: &quot;00123456&quot;,
+                &quot;tipo_cuenta&quot;: &quot;Caja de ahorro&quot;,
+                &quot;nombre_cuenta&quot;: &quot;Sarah Francia&quot;,
+                &quot;moneda&quot;: null,
+                &quot;monto_aportar&quot;: 300
+            },
+            &quot;aportaron_count&quot;: 2,
+            &quot;total_count&quot;: 12
+        },
+        {
+            &quot;estado&quot;: &quot;activa&quot;,
+            &quot;fecha_cumpleanos&quot;: &quot;2026-03-30&quot;,
+            &quot;alumno_beneficiario&quot;: {
+                &quot;id&quot;: 8,
+                &quot;nombre&quot;: &quot;Lisa&quot;
+            },
+            &quot;familia_beneficiaria&quot;: {
+                &quot;id&quot;: 8,
+                &quot;nombre&quot;: &quot;Lisa&quot;
+            },
+            &quot;familia_recolectora&quot;: {
+                &quot;id&quot;: 9,
+                &quot;nombre&quot;: &quot;Lorenzo&quot;,
+                &quot;banco&quot;: null,
+                &quot;numero_cuenta&quot;: null,
+                &quot;tipo_cuenta&quot;: null,
+                &quot;nombre_cuenta&quot;: null,
+                &quot;moneda&quot;: null,
+                &quot;monto_aportar&quot;: 300
+            },
+            &quot;aportaron_count&quot;: 0,
+            &quot;total_count&quot;: 12
+        }
+    ]
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-recolectas-cumpleanos-mes-actual" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-recolectas-cumpleanos-mes-actual"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-recolectas-cumpleanos-mes-actual"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-recolectas-cumpleanos-mes-actual" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-recolectas-cumpleanos-mes-actual">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-recolectas-cumpleanos-mes-actual" data-method="GET"
+      data-path="api/recolectas/cumpleanos/mes-actual"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-recolectas-cumpleanos-mes-actual', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-recolectas-cumpleanos-mes-actual"
+                    onclick="tryItOut('GETapi-recolectas-cumpleanos-mes-actual');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-recolectas-cumpleanos-mes-actual"
+                    onclick="cancelTryOut('GETapi-recolectas-cumpleanos-mes-actual');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-recolectas-cumpleanos-mes-actual"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/recolectas/cumpleanos/mes-actual</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-recolectas-cumpleanos-mes-actual"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-recolectas-cumpleanos-mes-actual"
                value="application/json"
                data-component="header">
     <br>

@@ -52,6 +52,72 @@ class RecolectandoService
         ];
     }
 
+    /**
+     * Colectas de cumpleaños del mes actual (alumnos activos con cumpleaños en el mes).
+     *
+     * @return array<int, array{
+     *   alumno_beneficiario: Alumno,
+     *   familia_beneficiaria: Familia,
+     *   familia_recolectora: ?Familia,
+     *   fecha_cumpleanos: \Carbon\Carbon,
+     *   estado: string,
+     *   aportaron_count: int,
+     *   total_count: int
+     * }>
+     */
+    public function recolectasDelMesActual(): array
+    {
+        $hoy = Carbon::today();
+        $mes = (int) $hoy->month;
+        $anio = (int) $hoy->year;
+
+        $alumnos = $this->alumnoRepository->activos()
+            ->filter(fn (Alumno $a) => $a->fecha_cumpleanos !== null && (int) $a->fecha_cumpleanos->month === $mes)
+            ->values();
+
+        if ($alumnos->isEmpty()) {
+            return [];
+        }
+
+        $familiasActivas = $this->familiaRepository->activas();
+
+        $out = [];
+        foreach ($alumnos as $alumno) {
+            if (!$alumno->familia_id || !$alumno->familia) {
+                continue;
+            }
+
+            $familiaBeneficiaria = $alumno->familia;
+            $familiaBeneficiariaId = (int) $familiaBeneficiaria->id;
+
+            $cumple = $alumno->fecha_cumpleanos;
+            $fechaCumpleEsteAnio = Carbon::createFromDate($anio, $cumple->month, $cumple->day)->startOfDay();
+
+            $recolectora = $familiasActivas->first(
+                fn (Familia $f) => (int) $f->familia_regalo_id === $familiaBeneficiariaId
+            );
+
+            $aportaron = $this->recolectaAportesService->getAlumnoIdsQueAportaron($familiaBeneficiariaId);
+            $totalPosibles = $this->recolectaAportesService->alumnosParaAportes($familiaBeneficiariaId);
+
+            $estado = $recolectora ? 'activa' : 'sin_recolectora';
+
+            $out[] = [
+                'alumno_beneficiario' => $alumno,
+                'familia_beneficiaria' => $familiaBeneficiaria,
+                'familia_recolectora' => $recolectora ?: null,
+                'fecha_cumpleanos' => $fechaCumpleEsteAnio,
+                'estado' => $estado,
+                'aportaron_count' => count($aportaron),
+                'total_count' => count($totalPosibles),
+            ];
+        }
+
+        usort($out, fn ($a, $b) => $a['fecha_cumpleanos']->lt($b['fecha_cumpleanos']) ? -1 : 1);
+
+        return $out;
+    }
+
     private function alumnoConProximoCumpleanos(): ?Alumno
     {
         $hoy = Carbon::today();
