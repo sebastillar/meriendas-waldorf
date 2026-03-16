@@ -4,6 +4,7 @@ namespace App\Domain\Services;
 
 use App\Domain\Models\Alumno;
 use App\Domain\Models\Asignacion;
+use App\Domain\Models\ConfiguracionCalendario;
 use App\Domain\Repositories\AlumnoRepositoryInterface;
 use App\Domain\Repositories\AsignacionRepositoryInterface;
 use App\Domain\Repositories\CerealPorDiaRepositoryInterface;
@@ -25,7 +26,14 @@ class GeneradorAgendaService
      */
     public function generarParaMes(int $anio, int $mes): int
     {
-        $desde = Carbon::createFromDate($anio, $mes, 1)->startOfDay();
+        $desdeMes = Carbon::createFromDate($anio, $mes, 1)->startOfDay();
+        $config = ConfiguracionCalendario::where('anio', $anio)->first();
+        if ($config && $config->fecha_inicio_clases) {
+            $inicioClasesCarbon = $config->fecha_inicio_clases->copy()->startOfDay();
+            $desde = $inicioClasesCarbon->greaterThan($desdeMes) ? $inicioClasesCarbon : $desdeMes;
+        } else {
+            $desde = $desdeMes;
+        }
         $hasta = $desde->copy()->endOfMonth();
         $diasLectivos = $this->obtenerDiasLectivos($desde, $hasta);
         if ($diasLectivos->isEmpty()) {

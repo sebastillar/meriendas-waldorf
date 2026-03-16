@@ -2,6 +2,7 @@
 
 namespace App\Domain\Services;
 
+use App\Domain\Models\ConfiguracionCalendario;
 use App\Domain\Repositories\AsignacionRepositoryInterface;
 use App\Domain\Repositories\DiaSinClaseRepositoryInterface;
 use Carbon\Carbon;
@@ -21,6 +22,10 @@ class AgendaService
     public function agendaSemana(?Carbon $fechaInicio = null, ?int $alumnoId = null): array
     {
         $inicio = $fechaInicio ? $fechaInicio->copy()->startOfDay() : Carbon::today()->startOfWeek();
+        $config = ConfiguracionCalendario::where('anio', $inicio->year)->first();
+        if ($config && $config->fecha_inicio_clases && $config->fecha_inicio_clases->gt($inicio)) {
+            $inicio = $config->fecha_inicio_clases->copy()->startOfDay();
+        }
         $fin = $inicio->copy()->addDays(6);
         $filas = $this->construirAgenda($inicio, $fin);
         return $alumnoId !== null ? $this->filtrarFilasPorAlumno($filas, $alumnoId) : $filas;
@@ -33,6 +38,10 @@ class AgendaService
     public function agendaMes(int $anio, int $mes, ?int $alumnoId = null): array
     {
         $inicio = Carbon::createFromDate($anio, $mes, 1)->startOfDay();
+        $config = ConfiguracionCalendario::where('anio', $anio)->first();
+        if ($config && $config->fecha_inicio_clases && $config->fecha_inicio_clases->gt($inicio)) {
+            $inicio = $config->fecha_inicio_clases->copy()->startOfDay();
+        }
         $fin = $inicio->copy()->endOfMonth();
         $filas = $this->construirAgenda($inicio, $fin);
         return $alumnoId !== null ? $this->filtrarFilasPorAlumno($filas, $alumnoId) : $filas;

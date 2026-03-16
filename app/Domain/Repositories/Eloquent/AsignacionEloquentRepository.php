@@ -3,6 +3,7 @@
 namespace App\Domain\Repositories\Eloquent;
 
 use App\Domain\Models\Asignacion;
+use App\Domain\Models\ConfiguracionCalendario;
 use App\Domain\Repositories\AsignacionRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -87,6 +88,10 @@ class AsignacionEloquentRepository implements AsignacionRepositoryInterface
     public function getConteosPorMesPorAlumnoHasta(Carbon $fecha): array
     {
         $hasta = $fecha->toDateString();
+        $config = ConfiguracionCalendario::where('anio', $fecha->year)->first();
+        $desde = $config && $config->fecha_inicio_clases
+            ? $config->fecha_inicio_clases->toDateString()
+            : '1900-01-01';
         $driver = DB::connection()->getDriverName();
 
         if ($driver === 'pgsql') {
@@ -101,11 +106,11 @@ class AsignacionEloquentRepository implements AsignacionRepositoryInterface
             $groupElab = 'alumno_elaboracion_id, YEAR(fecha), MONTH(fecha)';
         }
 
-        $fruta = Asignacion::where('fecha', '<=', $hasta)
+        $fruta = Asignacion::whereBetween('fecha', [$desde, $hasta])
             ->selectRaw($selectFruta)
             ->groupByRaw($groupFruta)
             ->get();
-        $elab = Asignacion::where('fecha', '<=', $hasta)
+        $elab = Asignacion::whereBetween('fecha', [$desde, $hasta])
             ->selectRaw($selectElab)
             ->groupByRaw($groupElab)
             ->get();
