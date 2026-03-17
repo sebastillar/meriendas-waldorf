@@ -1,4 +1,5 @@
-* text=auto eol=lf
+# Normalize line endings: repo stores LF; on Windows use core.autocrlf=true so working copy uses CRLF and only real edits show as modified.
+* text=auto
 
 *.blade.php diff=html
 *.css diff=css

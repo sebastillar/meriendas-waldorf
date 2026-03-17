@@ -15,6 +15,6 @@
         @endif
     </p>
     <p>Fecha: {{ $fecha }}</p>
-    <p>Saludos,<br>Colegio Waldorf</p>
+    <p>Saludos,<br>Equipo de Meriendas</p>
 </body>
 </html>

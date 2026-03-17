@@ -15,6 +15,6 @@
         @endif
         para el día <strong>{{ $fecha }}</strong>.
     </p>
-    <p>Saludos,<br>Meriendas Waldorf</p>
+    <p>Saludos,<br>Equipo de Meriendas</p>
 </body>
 </html>
