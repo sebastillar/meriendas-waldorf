@@ -55,26 +55,28 @@ flowchart TD
             </p>
             <ol class="list-decimal list-inside text-gray-700 space-y-2">
                 <li><strong>Menor cantidad de veces en ese rol en la semana</strong> (lunes–domingo): se prioriza a quien menos veces ha llevado fruta o elaborado dentro de esa semana.</li>
-                <li><strong>Menor cantidad de veces en ese rol en total</strong> hasta ese momento (historial hasta ayer más lo ya generado del mes): reparto equitativo a lo largo del tiempo, en particular para equilibrar las elaboraciones entre familias.</li>
-                <li>Si hay <strong>empate</strong>, se prioriza a quien <strong>hace más tiempo</strong> que no hacía ese rol (fecha de última vez más antigua, o nunca haberlo hecho).</li>
-                <li>Si sigue el empate, se hace un <strong>desempate aleatorio</strong> determinista (misma fecha y mismo rol dan siempre el mismo resultado, para que la agenda sea reproducible).</li>
+                <li><strong>Menor cantidad de veces en ese rol en total</strong> hasta ese momento (historial hasta ayer más lo ya generado del mes): reparto equitativo en cada rol a lo largo del tiempo.</li>
+                <li>Si aún hay empate, se prioriza el <strong>equilibrio entre fruta y elaboración</strong> para esa familia: para elegir fruta, favorece a quien tiene más elaboraciones que frutas (le “falta” llevar fruta); para elegir elaboración, favorece a quien tiene más frutas que elaboraciones. Así se evita que alguien acumule muchas elaboraciones y pocas frutas solo porque los dos roles se contaban por separado.</li>
+                <li>Después se prioriza a quien <strong>hace más tiempo</strong> que no hacía ese rol (fecha de última vez más antigua, o nunca haberlo hecho).</li>
+                <li>Si sigue el empate, <strong>desempate aleatorio</strong> determinista (misma fecha y mismo rol dan siempre el mismo resultado).</li>
             </ol>
             <p class="text-gray-700 mt-4 mb-4">
-                Así se combina un turno justo dentro de cada semana con un reparto equilibrado de fruta y elaboración en el año.
+                Así se combina turno semanal, equidad por rol y una carga más pareja entre llevar fruta y elaborar.
             </p>
             <div class="my-6 bg-white border border-[#CCCCFF]/50 rounded-lg p-4 overflow-x-auto">
                 <pre class="mermaid text-center">
 flowchart TD
     A[Candidatos: alumnos activos sin asignar ese día] --> B[Filtrar por menor conteo de ese rol en la semana]
     B --> C[Filtrar por menor conteo de ese rol en total]
-    C --> D{¿Cuántos quedan?}
-    D -->|Uno| E[Elegir ese alumno]
-    D -->|Varios| F[Entre ellos, filtrar por última vez más antigua]
-    F --> G{¿Cuántos quedan?}
-    G -->|Uno| E
-    G -->|Varios| H[Desempate aleatorio determinista por fecha + rol]
-    H --> E
-    E --> I[Asignar al día]
+    C --> D[Filtrar por mayor equilibrio cruzado fruta/elaboración]
+    D --> E{¿Cuántos quedan?}
+    E -->|Uno| F[Elegir ese alumno]
+    E -->|Varios| G[Entre ellos, filtrar por última vez más antigua]
+    G --> H{¿Cuántos quedan?}
+    H -->|Uno| F
+    H -->|Varios| I[Desempate aleatorio determinista por fecha + rol]
+    I --> F
+    F --> J[Asignar al día]
                 </pre>
             </div>
 
@@ -88,7 +90,7 @@ flowchart TD
                 <li>Solo se asignan <strong>días lectivos</strong> (lun–vie, sin días sin clase).</li>
                 <li>Cada día hay <strong>una familia para fruta</strong> y <strong>otra para elaboración</strong>.</li>
                 <li>Dentro de cada semana (lun–dom), por cada rol se prioriza <strong>no repetir ese rol</strong> hasta que el resto haya igualado el turno en esa semana.</li>
-                <li>Entre quienes empatan en eso, la elección prioriza <strong>reparto equitativo global</strong> en ese rol (fruta y elaboración por separado), luego hace más tiempo que no lo hacía.</li>
+                <li>Entre quienes empatan en eso, se prioriza <strong>equilibrio fruta vs elaboración</strong> por familia, luego antigüedad en ese rol.</li>
                 <li>El desempate final es <strong>aleatorio pero fijo</strong> para la misma fecha y rol.</li>
                 <li>El mes siguiente se recalcula y se genera automáticamente el día {{ $dia_recalculo_asignaciones }} de cada mes.</li>
             </ul>
