@@ -80,8 +80,8 @@ final class ColoresDiaWaldorf
     }
 
     /**
-     * Clase CSS para filas de la agenda con merienda (lun–vie lectivo).
-     * Vacío si es feriado / sin clase / fin de semana.
+     * Clases CSS para la celda «Día» en la agenda (lun–vie lectivo).
+     * Vacío si es feriado / sin clase / fin de semana (usar entonces agenda-dia-sin-clase en la vista).
      */
     public static function claseFilaAgenda(string $fechaYmd, bool $esFeriado): string
     {

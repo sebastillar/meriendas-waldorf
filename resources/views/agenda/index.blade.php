@@ -15,20 +15,46 @@
 
 @push('styles')
     <style>
-        .agenda-tabla tbody tr.agenda-col-lun > td {
-            background: linear-gradient(125deg, rgba(186, 230, 253, 0.72) 0%, rgba(224, 242, 254, 0.92) 52%, rgba(255, 255, 255, 0.55) 100%);
+        /* Color Waldorf solo en la columna «Día»; textos oscuros para contraste (WCAG) */
+        .agenda-tabla tbody td.agenda-dia-celda.agenda-col-lun {
+            background: linear-gradient(145deg, rgba(125, 211, 252, 0.55) 0%, rgba(186, 230, 253, 0.85) 45%, rgba(224, 242, 254, 0.95) 100%);
+            color: #0c2e44;
+            font-weight: 600;
+            border-left: 3px solid #0284c7;
         }
-        .agenda-tabla tbody tr.agenda-col-mar > td {
-            background: linear-gradient(118deg, rgba(254, 205, 211, 0.68) 0%, rgba(254, 226, 226, 0.88) 50%, rgba(255, 255, 255, 0.5) 100%);
+        .agenda-tabla tbody td.agenda-dia-celda.agenda-col-mar {
+            background: linear-gradient(140deg, rgba(251, 113, 133, 0.45) 0%, rgba(254, 205, 211, 0.82) 50%, rgba(255, 228, 230, 0.95) 100%);
+            color: #4c0519;
+            font-weight: 600;
+            border-left: 3px solid #e11d48;
         }
-        .agenda-tabla tbody tr.agenda-col-mie > td {
-            background: linear-gradient(122deg, rgba(253, 230, 138, 0.7) 0%, rgba(254, 249, 195, 0.9) 52%, rgba(255, 255, 255, 0.55) 100%);
+        .agenda-tabla tbody td.agenda-dia-celda.agenda-col-mie {
+            background: linear-gradient(140deg, rgba(250, 204, 21, 0.5) 0%, rgba(253, 230, 138, 0.88) 50%, rgba(254, 249, 195, 0.98) 100%);
+            color: #422006;
+            font-weight: 600;
+            border-left: 3px solid #ca8a04;
         }
-        .agenda-tabla tbody tr.agenda-col-jue > td {
-            background: linear-gradient(120deg, rgba(253, 186, 116, 0.65) 0%, rgba(255, 237, 213, 0.88) 52%, rgba(255, 255, 255, 0.52) 100%);
+        .agenda-tabla tbody td.agenda-dia-celda.agenda-col-jue {
+            background: linear-gradient(138deg, rgba(251, 146, 60, 0.48) 0%, rgba(253, 186, 116, 0.82) 48%, rgba(255, 237, 213, 0.96) 100%);
+            color: #431407;
+            font-weight: 600;
+            border-left: 3px solid #ea580c;
         }
-        .agenda-tabla tbody tr.agenda-col-vie > td {
-            background: linear-gradient(124deg, rgba(167, 243, 208, 0.68) 0%, rgba(209, 250, 229, 0.9) 52%, rgba(255, 255, 255, 0.55) 100%);
+        .agenda-tabla tbody td.agenda-dia-celda.agenda-col-vie {
+            background: linear-gradient(142deg, rgba(52, 211, 153, 0.45) 0%, rgba(167, 243, 208, 0.85) 50%, rgba(209, 250, 229, 0.98) 100%);
+            color: #022c22;
+            font-weight: 600;
+            border-left: 3px solid #059669;
+        }
+        .agenda-tabla tbody td.agenda-dia-celda.agenda-dia-sin-clase {
+            background: #e2e8f0;
+            color: #334155;
+            font-weight: 500;
+            border-left: 3px solid #94a3b8;
+        }
+        /* Una sola franja «hoy» en el borde izquierdo de la fila (primera celda) */
+        .agenda-tabla tbody tr.agenda-fila-hoy > th:first-child {
+            box-shadow: inset 4px 0 0 0 #059669;
         }
     </style>
 @endpush
@@ -135,58 +161,79 @@
                     </div>
                 </div>
 
-                <div class="overflow-x-auto bg-white shadow rounded-lg">
-                    <table class="agenda-tabla min-w-full divide-y divide-gray-200">
-                        <thead class="bg-[#CCCCFF]/30">
-                            <tr>
-                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Fecha</th>
-                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Día</th>
-                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Cereal</th>
-                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Fruta</th>
-                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Elaboración</th>
-                                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Agregar a calendario</th>
+                <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-900/5">
+                    <table class="agenda-tabla min-w-full border-collapse text-left">
+                        <caption class="sr-only">Agenda de meriendas: fecha, día, cereal, responsables de fruta y elaboración, enlace al calendario</caption>
+                        <thead>
+                            <tr class="bg-slate-800 text-white">
+                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-100 sm:px-5">Fecha</th>
+                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-100 sm:px-5">Día</th>
+                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-100 sm:px-5">Cereal</th>
+                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-100 sm:px-5">Fruta</th>
+                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-100 sm:px-5">Elaboración</th>
+                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-100 sm:px-5">
+                                    <span class="hidden sm:inline">Calendario</span>
+                                    <span class="sm:hidden" title="Añadir al calendario">.ics</span>
+                                </th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            @foreach ($filas as $fila)
+                        <tbody class="divide-y divide-slate-200">
+                            @foreach ($filas as $index => $fila)
                                 @php
                                     $esHoy = $fila['fecha'] === now()->toDateString();
                                     $esFeriado = $fila['es_feriado'];
                                     $claseColorDia = \App\Support\ColoresDiaWaldorf::claseFilaAgenda($fila['fecha'], $esFeriado);
-                                    $claseFila = $esFeriado ? 'bg-gray-300' : '';
-                                    $claseFila .= $claseColorDia !== '' ? ' '.$claseColorDia : '';
-                                    $claseFila .= $esHoy ? ' ring-2 ring-emerald-400' : '';
+                                    $claseCeldaDia = $esFeriado ? 'agenda-dia-sin-clase' : $claseColorDia;
+                                    $claseFila = $esFeriado ? 'bg-slate-200/90' : ($index % 2 === 1 ? 'bg-slate-50/80' : 'bg-white');
+                                    $claseFila .= $esHoy ? ' agenda-fila-hoy' : '';
                                 @endphp
-                                <tr class="{{ trim($claseFila) }}">
-                                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                                        {{ \Carbon\Carbon::parse($fila['fecha'])->format('d/m/Y') }}
-                                    </td>
-                                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                                        {{ ucfirst($fila['dia']) }}
-                                        @if (!empty($fila['etiqueta_feriado'] ?? ''))
-                                            <span class="block text-xs text-gray-600">{{ $fila['etiqueta_feriado'] }}</span>
+                                <tr class="{{ trim($claseFila) }} transition-colors hover:bg-violet-50/50 focus-within:bg-violet-50/40" @if ($esHoy) aria-current="date" @endif>
+                                    <th scope="row" class="px-4 py-3 align-top text-sm font-medium tabular-nums text-slate-900 sm:px-5 sm:py-3.5">
+                                        <span class="block">{{ \Carbon\Carbon::parse($fila['fecha'])->format('d/m/Y') }}</span>
+                                        @if ($esHoy)
+                                            <span class="mt-1 inline-flex rounded-full bg-emerald-600 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-white">Hoy</span>
+                                        @endif
+                                    </th>
+                                    <td class="agenda-dia-celda {{ $claseCeldaDia }} px-4 py-3 align-top text-sm leading-snug sm:px-5 sm:py-3.5">
+                                        <span class="block">{{ ucfirst($fila['dia']) }}</span>
+                                        @if (! empty($fila['etiqueta_feriado'] ?? ''))
+                                            <span class="mt-1 block text-xs font-normal opacity-90">{{ $fila['etiqueta_feriado'] }}</span>
                                         @endif
                                     </td>
-                                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                                        {{ $fila['cereal'] }}
+                                    <td class="px-4 py-3 align-top text-sm text-slate-800 sm:px-5 sm:py-3.5">
+                                        @if ($esFeriado)
+                                            <span class="text-slate-500">—</span>
+                                        @else
+                                            <span class="font-medium text-slate-900">{{ $fila['cereal'] ?: '—' }}</span>
+                                        @endif
                                     </td>
-                                    <td class="px-4 py-2 whitespace-nowrap text-sm">
+                                    <td class="px-4 py-3 align-top text-sm sm:px-5 sm:py-3.5">
                                         @if (! empty($fila['fruta']))
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                            <span class="inline-flex max-w-full items-center rounded-lg border border-emerald-200/80 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-900">
                                                 {{ $fila['fruta']['nombre'] ?? '' }}
                                             </span>
+                                        @elseif (! $esFeriado)
+                                            <span class="text-slate-400">—</span>
                                         @endif
                                     </td>
-                                    <td class="px-4 py-2 whitespace-nowrap text-sm">
+                                    <td class="px-4 py-3 align-top text-sm sm:px-5 sm:py-3.5">
                                         @if (! empty($fila['elaboracion']))
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-sky-100 text-sky-800">
+                                            <span class="inline-flex max-w-full items-center rounded-lg border border-sky-200/80 bg-sky-50 px-2.5 py-1 text-xs font-medium text-sky-950">
                                                 {{ $fila['elaboracion']['nombre'] ?? '' }}
                                             </span>
+                                        @elseif (! $esFeriado)
+                                            <span class="text-slate-400">—</span>
                                         @endif
                                     </td>
-                                    <td class="px-4 py-2 whitespace-nowrap text-sm">
-                                        <a href="{{ route('agenda.dia.ical', ['fecha' => $fila['fecha']]) }}" class="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-800" title="Agregar este día al calendario" aria-label="Agregar al calendario">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                    <td class="px-4 py-3 align-top sm:px-5 sm:py-3.5">
+                                        <a
+                                            href="{{ route('agenda.dia.ical', ['fecha' => $fila['fecha']]) }}"
+                                            class="inline-flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-indigo-700 underline decoration-indigo-300 underline-offset-2 outline-none ring-indigo-400 hover:bg-indigo-50 hover:text-indigo-900 focus-visible:ring-2"
+                                            title="Descargar evento para este día (.ics)"
+                                            aria-label="Descargar calendario (.ics) para el {{ \Carbon\Carbon::parse($fila['fecha'])->format('d/m/Y') }}"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                            <span class="hidden sm:inline">Añadir</span>
                                         </a>
                                     </td>
                                 </tr>
@@ -194,10 +241,10 @@
                         </tbody>
                     </table>
                 </div>
-                <p class="mt-3 text-xs text-[#9370DB]">
-                    Los días grises corresponden a fines de semana o días sin clase. Los días con merienda llevan un color suave según el día de la semana
-                    (<a href="{{ route('colores.por.dia') }}" class="underline hover:text-[#7b5cbf]">colores por día</a>).
-                    El día de hoy aparece resaltado.
+                <p class="mt-3 text-xs leading-relaxed text-slate-600">
+                    Los días sin clase o fin de semana aparecen en tonos grises. En días con merienda, solo la columna <strong>Día</strong> usa el color Waldorf del día de la semana
+                    (<a href="{{ route('colores.por.dia') }}" class="font-medium text-[#9370DB] underline decoration-violet-300 underline-offset-2 hover:text-[#7b5cbf]">colores por día</a>).
+                    La fila de <strong>hoy</strong> tiene una franja verde a la izquierda y la etiqueta «Hoy» en la fecha.
                 </p>
             </div>
 @endsection

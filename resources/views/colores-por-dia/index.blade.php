@@ -39,11 +39,6 @@
             <header class="text-center mb-12 md:mb-16">
                 <p class="text-sm font-medium tracking-wide text-[#9370DB]/90 uppercase mb-2">Ritmo de la semana</p>
                 <h1 class="text-4xl md:text-5xl font-semibold text-[#5c4d7a] leading-tight">Colores por día</h1>
-                <p class="mt-4 text-lg text-stone-600 max-w-2xl mx-auto leading-relaxed">
-                    En muchas escuelas Waldorf, cada día de la semana se acompaña con un color que ayuda a los niños
-                    a sentir el pulso del tiempo: un ritmo suave que ordena la semana sin prisa.
-                    No es una regla rígida, sino un lenguaje silencioso que nutre el sentido de pertenencia al día.
-                </p>
             </header>
 
             <div class="space-y-10 md:space-y-12">
@@ -93,8 +88,8 @@
             <footer class="mt-14 md:mt-16 text-center">
                 <p class="text-sm text-stone-500 max-w-xl mx-auto leading-relaxed">
                     En la <a href="{{ route('agenda.public') }}" class="text-[#9370DB] font-medium hover:underline">agenda de meriendas</a>,
-                    los días con clase muestran un fondo suave del color del día; los fines de semana y días sin clase se dejan neutros,
-                    como un espacio en blanco en el calendario.
+                    la columna <strong>Día</strong> lleva un color suave según el ritmo semanal; el resto de la fila se mantiene claro para leer bien cereal y familias.
+                    Los fines de semana y días sin clase se muestran en tonos neutros.
                 </p>
             </footer>
         </div>
