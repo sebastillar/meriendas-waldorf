@@ -11,6 +11,7 @@ use App\Domain\Repositories\CerealPorDiaRepositoryInterface;
 use App\Domain\Repositories\DiaSinClaseRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class GeneradorAgendaService
 {
@@ -52,17 +53,29 @@ class GeneradorAgendaService
             return 0;
         }
 
+        $desdeRegeneracion = $desde->copy();
+        $conteosSemana = [];
         $generadas = 0;
-        \DB::transaction(function () use ($diasLectivos, $alumnosActivos, &$generadas) {
+
+        DB::transaction(function () use ($diasLectivos, $alumnosActivos, $desdeRegeneracion, &$conteosSemana, &$generadas) {
             foreach ($diasLectivos as $fecha) {
+                $weekKey = $this->claveSemanaLunes($fecha);
+                if (! array_key_exists($weekKey, $conteosSemana)) {
+                    $precarga = $this->asignacionRepository->getConteosPorRolEnSemanaAntesDe($fecha, $desdeRegeneracion);
+                    $conteosSemana[$weekKey] = [
+                        'fruta' => $precarga['fruta'],
+                        'elaboracion' => $precarga['elaboracion'],
+                    ];
+                }
+
                 // 1=lunes..7=domingo (ISO); nuestra tabla usa 1..5 para lun-vie
                 $diaIso = $fecha->dayOfWeek === 0 ? 7 : $fecha->dayOfWeek;
                 $cerealModel = $this->cerealPorDiaRepository->getPorDiaSemana($diaIso);
                 $cereal = $cerealModel?->cereal ?? 'Sin cereal';
                 $conteosHasta = $this->asignacionRepository->getConteosPorAlumnoHasta($fecha->copy()->subDay());
 
-                $alumnoFruta = $this->elegirAlumnoParaRol($alumnosActivos, $conteosHasta, 'fruta', $fecha, null);
-                $alumnoElab = $this->elegirAlumnoParaRol($alumnosActivos, $conteosHasta, 'elaboracion', $fecha, $alumnoFruta?->id);
+                $alumnoFruta = $this->elegirAlumnoParaRol($alumnosActivos, $conteosHasta, $conteosSemana, $weekKey, 'fruta', $fecha, null);
+                $alumnoElab = $this->elegirAlumnoParaRol($alumnosActivos, $conteosHasta, $conteosSemana, $weekKey, 'elaboracion', $fecha, $alumnoFruta?->id);
 
                 if ($alumnoFruta && $alumnoElab) {
                     $asignacion = new Asignacion([
@@ -74,6 +87,9 @@ class GeneradorAgendaService
                     ]);
                     $this->asignacionRepository->guardar($asignacion);
                     $generadas++;
+
+                    $conteosSemana[$weekKey]['fruta'][$alumnoFruta->id] = ($conteosSemana[$weekKey]['fruta'][$alumnoFruta->id] ?? 0) + 1;
+                    $conteosSemana[$weekKey]['elaboracion'][$alumnoElab->id] = ($conteosSemana[$weekKey]['elaboracion'][$alumnoElab->id] ?? 0) + 1;
 
                     $conteosHasta[$alumnoFruta->id] = [
                         'fruta' => ($conteosHasta[$alumnoFruta->id]['fruta'] ?? 0) + 1,
@@ -95,6 +111,14 @@ class GeneradorAgendaService
     }
 
     /**
+     * Clave estable de la semana (lunes de esa semana en formato Y-m-d).
+     */
+    private function claveSemanaLunes(Carbon $fecha): string
+    {
+        return $fecha->copy()->startOfWeek(Carbon::MONDAY)->toDateString();
+    }
+
+    /**
      * @return Collection<int, Carbon>
      */
     private function obtenerDiasLectivos(Carbon $desde, Carbon $hasta): Collection
@@ -102,17 +126,23 @@ class GeneradorAgendaService
         $fechas = collect();
         $cursor = $desde->copy();
         while ($cursor->lte($hasta)) {
-            if ($cursor->isWeekday() && !$this->diaSinClaseRepository->esDiaSinClase($cursor)) {
+            if ($cursor->isWeekday() && ! $this->diaSinClaseRepository->esDiaSinClase($cursor)) {
                 $fechas->push($cursor->copy());
             }
             $cursor->addDay();
         }
+
         return $fechas;
     }
 
+    /**
+     * @param  array<string, array{fruta: array<int, int>, elaboracion: array<int, int>}>  $conteosSemana
+     */
     private function elegirAlumnoParaRol(
         Collection $alumnos,
         array $conteosHasta,
+        array $conteosSemana,
+        string $weekKey,
         string $rol,
         Carbon $fecha,
         ?int $excluirAlumnoId
@@ -125,26 +155,36 @@ class GeneradorAgendaService
             return null;
         }
 
-        $conConteos = $candidatos->map(function ($a) use ($conteosHasta, $keyCount, $keyLast) {
+        $semFruta = $conteosSemana[$weekKey]['fruta'] ?? [];
+        $semElab = $conteosSemana[$weekKey]['elaboracion'] ?? [];
+
+        $conConteos = $candidatos->map(function ($a) use ($conteosHasta, $keyCount, $keyLast, $semFruta, $semElab, $rol) {
             $c = $conteosHasta[$a->id] ?? ['fruta' => 0, 'elaboracion' => 0, 'ultima_fruta' => null, 'ultima_elaboracion' => null];
+            $weekly = $rol === 'fruta'
+                ? (int) ($semFruta[$a->id] ?? 0)
+                : (int) ($semElab[$a->id] ?? 0);
+
             return [
                 'alumno' => $a,
+                'weekly' => $weekly,
                 'count' => (int) ($c[$keyCount] ?? 0),
                 'last' => $c[$keyLast] ?? null,
             ];
         });
 
-        $minCount = $conConteos->min('count');
-        $conMinCount = $conConteos->where('count', $minCount);
+        $minWeekly = $conConteos->min('weekly');
+        $conMinWeekly = $conConteos->where('weekly', $minWeekly)->values();
+
+        $minCount = $conMinWeekly->min('count');
+        $conMinCount = $conMinWeekly->where('count', $minCount)->values();
 
         $oldestLast = $conMinCount->filter(fn ($x) => $x['last'] !== null)->min('last');
         if ($oldestLast === null) {
             $elegibles = $conMinCount;
         } else {
-            $elegibles = $conMinCount->filter(fn ($x) => $x['last'] === $oldestLast || $x['last'] === null);
+            $elegibles = $conMinCount->filter(fn ($x) => $x['last'] === $oldestLast || $x['last'] === null)->values();
         }
 
-        $elegibles = $elegibles->values();
         if ($elegibles->isEmpty()) {
             return $candidatos->first();
         }
@@ -152,8 +192,9 @@ class GeneradorAgendaService
             return $elegibles->first()['alumno'];
         }
 
-        mt_srand(crc32($fecha->format('Y-m-d') . $rol));
+        mt_srand(crc32($fecha->format('Y-m-d').$rol));
         $idx = mt_rand(0, $elegibles->count() - 1);
+
         return $elegibles->get($idx)['alumno'];
     }
 }

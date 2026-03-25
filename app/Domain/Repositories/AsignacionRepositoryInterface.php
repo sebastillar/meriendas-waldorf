@@ -14,6 +14,14 @@ interface AsignacionRepositoryInterface
     public function getConteosPorAlumnoHasta(Carbon $fecha): array;
 
     /**
+     * Conteos en la semana calendario (lunes–domingo) que contiene $diaEnSemana,
+     * solo para asignaciones con fecha estrictamente anterior a $exclusivoDesde.
+     *
+     * @return array{fruta: array<int, int>, elaboracion: array<int, int>}
+     */
+    public function getConteosPorRolEnSemanaAntesDe(Carbon $diaEnSemana, Carbon $exclusivoDesde): array;
+
+    /**
      * Conteos por mes por alumno hasta la fecha. Clave alumno_id, valor array de 'anio-mes' => ['fruta' => int, 'elaboracion' => int].
      * @return array<int, array<string, array{fruta: int, elaboracion: int}>>
      */

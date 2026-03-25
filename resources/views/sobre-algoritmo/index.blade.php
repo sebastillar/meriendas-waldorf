@@ -35,36 +35,46 @@ flowchart TD
     F --> G{¿Ambos elegidos?}
     G -->|Sí| H[Guardar asignación]
     G -->|No| C
-    H --> I[Actualizar conteos simulados]
+    H --> I[Actualizar conteos simulados y semanales]
     I --> C
     C --> J[Fin]
                 </pre>
             </div>
+
+            <h2 class="text-xl font-semibold text-[#9370DB] mt-8 mb-3">Reparto dentro de la semana (por rol)</h2>
+            <p class="text-gray-700 mb-4">
+                La <strong>semana</strong> se considera de <strong>lunes a domingo</strong>. En <strong>fruta</strong> y en <strong>elaboración</strong> por separado, primero se favorece a quienes llevan <strong>menos veces ese mismo rol en esa semana</strong>. Así se evita que alguien repita el mismo rol en la semana mientras otros compañeros aún no han tenido ese turno en la misma ronda. Cuando ya todos han subido al mismo nivel semanal en ese rol (por ejemplo, todos llevan al menos una elaboración esa semana), recién ahí puede tocarle una segunda vez a alguien, y en ese caso también se respeta la equidad global (ver siguiente apartado).
+            </p>
+            <p class="text-gray-700 mb-4">
+                Si una semana <strong>cruza dos meses</strong> y se regenera el calendario a partir de un día a mitad de semana, las asignaciones <strong>anteriores</strong> a ese día (aunque sigan en el mismo lunes–domingo) cuentan para esos conteos semanales.
+            </p>
 
             <h2 class="text-xl font-semibold text-[#9370DB] mt-8 mb-3">Criterio para elegir a una familia</h2>
             <p class="text-gray-700 mb-4">
                 Para cada rol (fruta o elaboración), el sistema elige entre los alumnos activos que aún no tienen asignación ese día. La elección sigue estos pasos en orden:
             </p>
             <ol class="list-decimal list-inside text-gray-700 space-y-2">
-                <li><strong>Menor cantidad de veces</strong> en ese rol hasta ese momento: se prioriza a quien menos veces ha llevado fruta (o elaborado) hasta la fecha.</li>
+                <li><strong>Menor cantidad de veces en ese rol en la semana</strong> (lunes–domingo): se prioriza a quien menos veces ha llevado fruta o elaborado dentro de esa semana.</li>
+                <li><strong>Menor cantidad de veces en ese rol en total</strong> hasta ese momento (historial hasta ayer más lo ya generado del mes): reparto equitativo a lo largo del tiempo, en particular para equilibrar las elaboraciones entre familias.</li>
                 <li>Si hay <strong>empate</strong>, se prioriza a quien <strong>hace más tiempo</strong> que no hacía ese rol (fecha de última vez más antigua, o nunca haberlo hecho).</li>
                 <li>Si sigue el empate, se hace un <strong>desempate aleatorio</strong> determinista (misma fecha y mismo rol dan siempre el mismo resultado, para que la agenda sea reproducible).</li>
             </ol>
             <p class="text-gray-700 mt-4 mb-4">
-                Así se equilibra la cantidad de veces que cada familia lleva fruta y elabora a lo largo del tiempo.
+                Así se combina un turno justo dentro de cada semana con un reparto equilibrado de fruta y elaboración en el año.
             </p>
             <div class="my-6 bg-white border border-[#CCCCFF]/50 rounded-lg p-4 overflow-x-auto">
                 <pre class="mermaid text-center">
 flowchart TD
-    A[Candidatos: alumnos activos sin asignar ese día] --> B[Filtrar por menor conteo en el rol]
-    B --> C{¿Cuántos quedan?}
-    C -->|Uno| D[Elegir ese alumno]
-    C -->|Varios| E[Entre ellos, filtrar por última vez más antigua]
-    E --> F{¿Cuántos quedan?}
-    F -->|Uno| D
-    F -->|Varios| G[Desempate aleatorio determinista por fecha + rol]
-    G --> D
-    D --> H[Asignar al día]
+    A[Candidatos: alumnos activos sin asignar ese día] --> B[Filtrar por menor conteo de ese rol en la semana]
+    B --> C[Filtrar por menor conteo de ese rol en total]
+    C --> D{¿Cuántos quedan?}
+    D -->|Uno| E[Elegir ese alumno]
+    D -->|Varios| F[Entre ellos, filtrar por última vez más antigua]
+    F --> G{¿Cuántos quedan?}
+    G -->|Uno| E
+    G -->|Varios| H[Desempate aleatorio determinista por fecha + rol]
+    H --> E
+    E --> I[Asignar al día]
                 </pre>
             </div>
 
@@ -77,7 +87,8 @@ flowchart TD
             <ul class="list-disc list-inside text-gray-700 space-y-1">
                 <li>Solo se asignan <strong>días lectivos</strong> (lun–vie, sin días sin clase).</li>
                 <li>Cada día hay <strong>una familia para fruta</strong> y <strong>otra para elaboración</strong>.</li>
-                <li>La elección prioriza <strong>reparto equitativo</strong> (menor cantidad de veces en ese rol y, si aplica, hace más tiempo que no lo hacía).</li>
+                <li>Dentro de cada semana (lun–dom), por cada rol se prioriza <strong>no repetir ese rol</strong> hasta que el resto haya igualado el turno en esa semana.</li>
+                <li>Entre quienes empatan en eso, la elección prioriza <strong>reparto equitativo global</strong> en ese rol (fruta y elaboración por separado), luego hace más tiempo que no lo hacía.</li>
                 <li>El desempate final es <strong>aleatorio pero fijo</strong> para la misma fecha y rol.</li>
                 <li>El mes siguiente se recalcula y se genera automáticamente el día {{ $dia_recalculo_asignaciones }} de cada mes.</li>
             </ul>

@@ -66,5 +66,61 @@ class AsignacionEloquentRepositoryTest extends TestCase
         $this->assertSame(2, $result[$alumno->id]['2026-3']['fruta']);
         $this->assertSame(2, $result[$alumno->id]['2026-3']['elaboracion']);
     }
+
+    public function test_getConteosPorRolEnSemanaAntesDe_excluye_fechas_en_adelante_del_limite(): void
+    {
+        $familia = Familia::create([
+            'nombre_madre' => null,
+            'email_madre' => null,
+            'nombre_padre' => null,
+            'email_padre' => null,
+            'activo' => true,
+        ]);
+
+        $a = Alumno::create([
+            'familia_id' => $familia->id,
+            'nombre' => 'Uno',
+            'fecha_cumpleanos' => null,
+            'activo' => true,
+        ]);
+        $b = Alumno::create([
+            'familia_id' => $familia->id,
+            'nombre' => 'Dos',
+            'fecha_cumpleanos' => null,
+            'activo' => true,
+        ]);
+
+        Asignacion::create([
+            'fecha' => '2026-03-09',
+            'alumno_fruta_id' => $a->id,
+            'alumno_elaboracion_id' => $b->id,
+            'cereal' => 'x',
+            'estado' => 'planificada',
+        ]);
+        Asignacion::create([
+            'fecha' => '2026-03-10',
+            'alumno_fruta_id' => $b->id,
+            'alumno_elaboracion_id' => $a->id,
+            'cereal' => 'x',
+            'estado' => 'planificada',
+        ]);
+
+        /** @var AsignacionRepositoryInterface $repo */
+        $repo = $this->app->make(AsignacionRepositoryInterface::class);
+
+        $miercoles = Carbon::create(2026, 3, 11);
+        $soloLunes = $repo->getConteosPorRolEnSemanaAntesDe($miercoles, Carbon::create(2026, 3, 10));
+
+        $this->assertSame(1, $soloLunes['fruta'][$a->id] ?? 0);
+        $this->assertSame(0, $soloLunes['fruta'][$b->id] ?? 0);
+        $this->assertSame(0, $soloLunes['elaboracion'][$a->id] ?? 0);
+        $this->assertSame(1, $soloLunes['elaboracion'][$b->id] ?? 0);
+
+        $lunesYmartes = $repo->getConteosPorRolEnSemanaAntesDe($miercoles, Carbon::create(2026, 3, 11));
+        $this->assertSame(1, $lunesYmartes['fruta'][$a->id] ?? 0);
+        $this->assertSame(1, $lunesYmartes['fruta'][$b->id] ?? 0);
+        $this->assertSame(1, $lunesYmartes['elaboracion'][$a->id] ?? 0);
+        $this->assertSame(1, $lunesYmartes['elaboracion'][$b->id] ?? 0);
+    }
 }
 

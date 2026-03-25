@@ -85,6 +85,41 @@ class AsignacionEloquentRepository implements AsignacionRepositoryInterface
         return $out;
     }
 
+    public function getConteosPorRolEnSemanaAntesDe(Carbon $diaEnSemana, Carbon $exclusivoDesde): array
+    {
+        $inicio = $diaEnSemana->copy()->startOfWeek(Carbon::MONDAY)->toDateString();
+        $fin = $diaEnSemana->copy()->endOfWeek(Carbon::SUNDAY)->toDateString();
+        $limite = $exclusivoDesde->toDateString();
+
+        $fruta = Asignacion::query()
+            ->whereBetween('fecha', [$inicio, $fin])
+            ->where('fecha', '<', $limite)
+            ->selectRaw('alumno_fruta_id as alumno_id, count(*) as total')
+            ->groupBy('alumno_fruta_id')
+            ->get();
+
+        $elab = Asignacion::query()
+            ->whereBetween('fecha', [$inicio, $fin])
+            ->where('fecha', '<', $limite)
+            ->selectRaw('alumno_elaboracion_id as alumno_id, count(*) as total')
+            ->groupBy('alumno_elaboracion_id')
+            ->get();
+
+        $outFruta = [];
+        foreach ($fruta as $row) {
+            $outFruta[(int) $row->alumno_id] = (int) $row->total;
+        }
+        $outElab = [];
+        foreach ($elab as $row) {
+            $outElab[(int) $row->alumno_id] = (int) $row->total;
+        }
+
+        return [
+            'fruta' => $outFruta,
+            'elaboracion' => $outElab,
+        ];
+    }
+
     public function getConteosPorMesPorAlumnoHasta(Carbon $fecha): array
     {
         $config = ConfiguracionCalendario::where('anio', $fecha->year)->first();
