@@ -13,6 +13,26 @@
 
 @section('title', 'Agenda de meriendas')
 
+@push('styles')
+    <style>
+        .agenda-tabla tbody tr.agenda-col-lun > td {
+            background: linear-gradient(125deg, rgba(186, 230, 253, 0.72) 0%, rgba(224, 242, 254, 0.92) 52%, rgba(255, 255, 255, 0.55) 100%);
+        }
+        .agenda-tabla tbody tr.agenda-col-mar > td {
+            background: linear-gradient(118deg, rgba(254, 205, 211, 0.68) 0%, rgba(254, 226, 226, 0.88) 50%, rgba(255, 255, 255, 0.5) 100%);
+        }
+        .agenda-tabla tbody tr.agenda-col-mie > td {
+            background: linear-gradient(122deg, rgba(253, 230, 138, 0.7) 0%, rgba(254, 249, 195, 0.9) 52%, rgba(255, 255, 255, 0.55) 100%);
+        }
+        .agenda-tabla tbody tr.agenda-col-jue > td {
+            background: linear-gradient(120deg, rgba(253, 186, 116, 0.65) 0%, rgba(255, 237, 213, 0.88) 52%, rgba(255, 255, 255, 0.52) 100%);
+        }
+        .agenda-tabla tbody tr.agenda-col-vie > td {
+            background: linear-gradient(124deg, rgba(167, 243, 208, 0.68) 0%, rgba(209, 250, 229, 0.9) 52%, rgba(255, 255, 255, 0.55) 100%);
+        }
+    </style>
+@endpush
+
 @section('content')
     <div class="max-w-5xl mx-auto px-4 py-6">
         {{-- Hero (solo en Agenda) --}}
@@ -116,7 +136,7 @@
                 </div>
 
                 <div class="overflow-x-auto bg-white shadow rounded-lg">
-                    <table class="min-w-full divide-y divide-gray-200">
+                    <table class="agenda-tabla min-w-full divide-y divide-gray-200">
                         <thead class="bg-[#CCCCFF]/30">
                             <tr>
                                 <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Fecha</th>
@@ -127,12 +147,14 @@
                                 <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Agregar a calendario</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody class="divide-y divide-gray-200">
                             @foreach ($filas as $fila)
                                 @php
                                     $esHoy = $fila['fecha'] === now()->toDateString();
                                     $esFeriado = $fila['es_feriado'];
+                                    $claseColorDia = \App\Support\ColoresDiaWaldorf::claseFilaAgenda($fila['fecha'], $esFeriado);
                                     $claseFila = $esFeriado ? 'bg-gray-300' : '';
+                                    $claseFila .= $claseColorDia !== '' ? ' '.$claseColorDia : '';
                                     $claseFila .= $esHoy ? ' ring-2 ring-emerald-400' : '';
                                 @endphp
                                 <tr class="{{ trim($claseFila) }}">
@@ -173,7 +195,9 @@
                     </table>
                 </div>
                 <p class="mt-3 text-xs text-[#9370DB]">
-                    Los días grises corresponden a fines de semana o feriados. El día de hoy aparece resaltado.
+                    Los días grises corresponden a fines de semana o días sin clase. Los días con merienda llevan un color suave según el día de la semana
+                    (<a href="{{ route('colores.por.dia') }}" class="underline hover:text-[#7b5cbf]">colores por día</a>).
+                    El día de hoy aparece resaltado.
                 </p>
             </div>
 @endsection

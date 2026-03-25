@@ -5,6 +5,7 @@
         <title>@yield('title', 'Meriendas Waldorf')</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://cdn.tailwindcss.com"></script>
+        @stack('styles')
     </head>
     <body class="bg-white min-h-screen flex flex-col">
         <header class="bg-[#9370DB] text-white py-4 shadow">
@@ -35,6 +36,7 @@
         <footer class="bg-[#9370DB]/90 text-white py-6 mt-auto">
             <div class="max-w-5xl mx-auto px-4">
                 <nav aria-label="Navegación del pie" class="flex flex-wrap items-center gap-x-4 gap-y-1">
+                    <a href="{{ route('colores.por.dia') }}" class="text-sm hover:underline {{ request()->routeIs('colores.por.dia') ? 'font-semibold' : '' }}">Colores por día</a>
                     <a href="{{ route('sobre.algoritmo') }}" class="text-sm hover:underline {{ request()->routeIs('sobre.algoritmo') ? 'font-semibold' : '' }}">Sobre el algoritmo de asignación</a>
                     <a href="{{ url('/docs') }}" class="text-sm hover:underline" target="_blank" rel="noopener noreferrer">Documentación API REST</a>
                 </nav>
