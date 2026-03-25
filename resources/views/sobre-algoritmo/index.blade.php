@@ -55,8 +55,8 @@ flowchart TD
             </p>
             <ol class="list-decimal list-inside text-gray-700 space-y-2">
                 <li><strong>Menor cantidad de veces en ese rol en la semana</strong> (lunes–domingo): se prioriza a quien menos veces ha llevado fruta o elaborado dentro de esa semana.</li>
-                <li><strong>Menor cantidad de veces en ese rol en total</strong> hasta ese momento (historial hasta ayer más lo ya generado del mes): reparto equitativo en cada rol a lo largo del tiempo.</li>
-                <li>Si aún hay empate, se prioriza el <strong>equilibrio entre fruta y elaboración</strong> para esa familia: para elegir fruta, favorece a quien tiene más elaboraciones que frutas (le “falta” llevar fruta); para elegir elaboración, favorece a quien tiene más frutas que elaboraciones. Así se evita que alguien acumule muchas elaboraciones y pocas frutas solo porque los dos roles se contaban por separado.</li>
+                <li><strong>Equilibrio entre fruta y elaboración</strong> para esa familia (antes del conteo total del rol): al elegir fruta, favorece a quien tiene más elaboraciones que frutas; al elegir elaboración, a quien tiene más frutas que elaboraciones. Así no gana elaboración “por ser el único con menos elaboraciones en el mes” si ya lleva muchas elaboraciones y pocas frutas.</li>
+                <li><strong>Menor cantidad de veces en ese rol en total</strong> hasta ese momento (historial hasta ayer más lo ya generado del mes), entre quienes empatan en lo anterior.</li>
                 <li>Después se prioriza a quien <strong>hace más tiempo</strong> que no hacía ese rol (fecha de última vez más antigua, o nunca haberlo hecho).</li>
                 <li>Si sigue el empate, <strong>desempate aleatorio</strong> determinista (misma fecha y mismo rol dan siempre el mismo resultado).</li>
             </ol>
@@ -67,8 +67,8 @@ flowchart TD
                 <pre class="mermaid text-center">
 flowchart TD
     A[Candidatos: alumnos activos sin asignar ese día] --> B[Filtrar por menor conteo de ese rol en la semana]
-    B --> C[Filtrar por menor conteo de ese rol en total]
-    C --> D[Filtrar por mayor equilibrio cruzado fruta/elaboración]
+    B --> C[Filtrar por mayor equilibrio cruzado fruta/elaboración]
+    C --> D[Filtrar por menor conteo de ese rol en total]
     D --> E{¿Cuántos quedan?}
     E -->|Uno| F[Elegir ese alumno]
     E -->|Varios| G[Entre ellos, filtrar por última vez más antigua]
@@ -90,7 +90,7 @@ flowchart TD
                 <li>Solo se asignan <strong>días lectivos</strong> (lun–vie, sin días sin clase).</li>
                 <li>Cada día hay <strong>una familia para fruta</strong> y <strong>otra para elaboración</strong>.</li>
                 <li>Dentro de cada semana (lun–dom), por cada rol se prioriza <strong>no repetir ese rol</strong> hasta que el resto haya igualado el turno en esa semana.</li>
-                <li>Entre quienes empatan en eso, se prioriza <strong>equilibrio fruta vs elaboración</strong> por familia, luego antigüedad en ese rol.</li>
+                <li>Tras la semana, se prioriza <strong>equilibrio fruta vs elaboración</strong>, luego el conteo global del rol y la antigüedad en ese rol.</li>
                 <li>El desempate final es <strong>aleatorio pero fijo</strong> para la misma fecha y rol.</li>
                 <li>El mes siguiente se recalcula y se genera automáticamente el día {{ $dia_recalculo_asignaciones }} de cada mes.</li>
             </ul>

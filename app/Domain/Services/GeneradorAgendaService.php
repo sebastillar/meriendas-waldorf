@@ -165,7 +165,9 @@ class GeneradorAgendaService
                 : (int) ($semElab[$a->id] ?? 0);
             $nf = (int) ($c['fruta'] ?? 0);
             $ne = (int) ($c['elaboracion'] ?? 0);
-            // Equilibrio entre roles: a quien le "falta" más este rol respecto del otro (desempate entre empates en conteo del rol).
+            // Equilibrio entre roles (se aplica ANTES del conteo del rol, no después):
+            // fruta → priorizar quien tiene más elaboraciones que frutas (ne - nf).
+            // elaboración → priorizar quien tiene más frutas que elaboraciones (nf - ne).
             $balanceCruzado = $rol === 'fruta' ? ($ne - $nf) : ($nf - $ne);
 
             return [
@@ -180,17 +182,17 @@ class GeneradorAgendaService
         $minWeekly = $conConteos->min('weekly');
         $conMinWeekly = $conConteos->where('weekly', $minWeekly)->values();
 
-        $minCount = $conMinWeekly->min('count');
-        $conMinCount = $conMinWeekly->where('count', $minCount)->values();
+        $maxBalance = $conMinWeekly->max('balance_cruzado');
+        $conBalance = $conMinWeekly->where('balance_cruzado', $maxBalance)->values();
 
-        $maxBalance = $conMinCount->max('balance_cruzado');
-        $conBalance = $conMinCount->where('balance_cruzado', $maxBalance)->values();
+        $minCount = $conBalance->min('count');
+        $conMinCount = $conBalance->where('count', $minCount)->values();
 
-        $oldestLast = $conBalance->filter(fn ($x) => $x['last'] !== null)->min('last');
+        $oldestLast = $conMinCount->filter(fn ($x) => $x['last'] !== null)->min('last');
         if ($oldestLast === null) {
-            $elegibles = $conBalance;
+            $elegibles = $conMinCount;
         } else {
-            $elegibles = $conBalance->filter(fn ($x) => $x['last'] === $oldestLast || $x['last'] === null)->values();
+            $elegibles = $conMinCount->filter(fn ($x) => $x['last'] === $oldestLast || $x['last'] === null)->values();
         }
 
         if ($elegibles->isEmpty()) {
