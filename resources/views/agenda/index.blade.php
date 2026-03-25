@@ -165,13 +165,13 @@
                     <table class="agenda-tabla min-w-full border-collapse text-left">
                         <caption class="sr-only">Agenda de meriendas: fecha, día, cereal, responsables de fruta y elaboración, enlace al calendario</caption>
                         <thead>
-                            <tr class="bg-slate-800 text-white">
-                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-100 sm:px-5">Fecha</th>
-                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-100 sm:px-5">Día</th>
-                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-100 sm:px-5">Cereal</th>
-                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-100 sm:px-5">Fruta</th>
-                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-100 sm:px-5">Elaboración</th>
-                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-slate-100 sm:px-5">
+                            <tr class="border-b border-white/20 bg-[#9370DB] text-white">
+                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-white sm:px-5">Fecha</th>
+                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-white sm:px-5">Día</th>
+                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-white sm:px-5">Cereal</th>
+                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-white sm:px-5">Fruta</th>
+                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-white sm:px-5">Elaboración</th>
+                                <th scope="col" class="px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-white sm:px-5">
                                     <span class="hidden sm:inline">Calendario</span>
                                     <span class="sm:hidden" title="Añadir al calendario">.ics</span>
                                 </th>
