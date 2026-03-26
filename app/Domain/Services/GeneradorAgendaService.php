@@ -233,7 +233,7 @@ class GeneradorAgendaService
 
     /**
      * @param  array<int, int>  $excluirPorConsecutividad  IDs a excluir por regla día lectivo previo (elaboración→fruta / fruta→elaboración)
-     * @param  array<string, array{fruta: array<int, int>, elaboracion: array<int, int>}>  $conteosSemana
+     * @param  array<string, array{fruta: array<int, int>, elaboracion: array<int, int>}>  $conteosSemana  fruta y elaboración por semana ISO (se prioriza la suma para no repetir familia en la misma semana).
      */
     private function elegirAlumnoParaRol(
         Collection $alumnos,
@@ -269,11 +269,11 @@ class GeneradorAgendaService
 
         $conConteos = $candidatos->map(function ($a) use ($conteosHasta, $keyCount, $keyLast, $semFruta, $semElab, $rol) {
             $c = $conteosHasta[$a->id] ?? ['fruta' => 0, 'elaboracion' => 0, 'ultima_fruta' => null, 'ultima_elaboracion' => null];
-            $weekly = $rol === 'fruta'
-                ? (int) ($semFruta[$a->id] ?? 0)
-                : (int) ($semElab[$a->id] ?? 0);
+            // Una sola aparición por semana (fruta o elaboración): sumar ambos roles en la semana ISO.
+            $weekly = (int) ($semFruta[$a->id] ?? 0) + (int) ($semElab[$a->id] ?? 0);
             $nf = (int) ($c['fruta'] ?? 0);
             $ne = (int) ($c['elaboracion'] ?? 0);
+            $totalMes = $nf + $ne;
             // Equilibrio entre roles (se aplica ANTES del conteo del rol, no después):
             // fruta → priorizar quien tiene más elaboraciones que frutas (ne - nf).
             // elaboración → priorizar quien tiene más frutas que elaboraciones (nf - ne).
@@ -282,6 +282,7 @@ class GeneradorAgendaService
             return [
                 'alumno' => $a,
                 'weekly' => $weekly,
+                'total_mes' => $totalMes,
                 'count' => (int) ($c[$keyCount] ?? 0),
                 'last' => $c[$keyLast] ?? null,
                 'balance_cruzado' => $balanceCruzado,
@@ -291,8 +292,11 @@ class GeneradorAgendaService
         $minWeekly = $conConteos->min('weekly');
         $conMinWeekly = $conConteos->where('weekly', $minWeekly)->values();
 
-        $maxBalance = $conMinWeekly->max('balance_cruzado');
-        $conBalance = $conMinWeekly->where('balance_cruzado', $maxBalance)->values();
+        $minTotalMes = $conMinWeekly->min('total_mes');
+        $conMinTotalMes = $conMinWeekly->where('total_mes', $minTotalMes)->values();
+
+        $maxBalance = $conMinTotalMes->max('balance_cruzado');
+        $conBalance = $conMinTotalMes->where('balance_cruzado', $maxBalance)->values();
 
         $minCount = $conBalance->min('count');
         $conMinCount = $conBalance->where('count', $minCount)->values();

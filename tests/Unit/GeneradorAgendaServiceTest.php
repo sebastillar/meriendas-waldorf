@@ -78,6 +78,19 @@ class GeneradorAgendaServiceTest extends TestCase
                     );
                 }
             }
+            $totalPorAlumno = [];
+            foreach (['fruta', 'elaboracion'] as $rol) {
+                foreach ($roles[$rol] as $alumnoId => $veces) {
+                    $totalPorAlumno[$alumnoId] = ($totalPorAlumno[$alumnoId] ?? 0) + $veces;
+                }
+            }
+            foreach ($totalPorAlumno as $alumnoId => $total) {
+                $this->assertLessThanOrEqual(
+                    1,
+                    $total,
+                    "Alumno {$alumnoId} apareció {$total} veces (fruta+elab) en la semana del {$lunes}; con 10 alumnos y 5 días lectivos debería entrar como mucho una vez por semana"
+                );
+            }
         }
     }
 
