@@ -2,7 +2,7 @@
 <html lang="es">
     <head>
         <meta charset="utf-8">
-        <title>@yield('title', 'Meriendas Waldorf')</title>
+        <title>@yield('title', 'Meriendas - Tercer Año')</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://cdn.tailwindcss.com"></script>
         @stack('styles')
