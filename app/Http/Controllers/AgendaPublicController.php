@@ -104,8 +104,14 @@ class AgendaPublicController extends Controller
         $alumnosParaFiltro = $this->alumnoService->activosParaFiltro();
         $avisosProximos = $alumnoId ? $this->agendaService->getAvisosProximosParaAlumno($alumnoId) : [];
 
+        $urlsGoogleCalendarPorFecha = [];
+        foreach ($filas as $filaAgenda) {
+            $urlsGoogleCalendarPorFecha[$filaAgenda['fecha']] = $this->agendaIcalService->urlGoogleCalendarTemplate($filaAgenda);
+        }
+
         return view('agenda.index', [
             'filas' => $filas,
+            'urlsGoogleCalendarPorFecha' => $urlsGoogleCalendarPorFecha,
             'titulo' => $titulo,
             'vista' => $vista,
             'anio' => $anio,
@@ -194,7 +200,7 @@ class AgendaPublicController extends Controller
     }
 
     /**
-     * iCal de un solo día (un evento). Para el enlace "Añadir al calendario" por fila.
+     * iCal de un solo día. La tabla de agenda usa enlaces a Google Calendar; esta ruta queda por compatibilidad o enlaces directos.
      */
     public function icalUnDia(string $fecha)
     {

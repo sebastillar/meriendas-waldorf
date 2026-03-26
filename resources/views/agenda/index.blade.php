@@ -9,6 +9,7 @@
     $inicioSemana = $inicioSemana ?? \Carbon\Carbon::today()->startOfWeek();
     $avisosProximos = $avisosProximos ?? [];
     $estadisticasMes = $estadisticasMes ?? null;
+    $urlsGoogleCalendarPorFecha = $urlsGoogleCalendarPorFecha ?? [];
 @endphp
 @extends('layouts.app')
 
@@ -245,7 +246,7 @@
 
                 <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-900/5 -mx-1 px-1 sm:mx-0 sm:px-0">
                     <table class="agenda-tabla min-w-0 w-full max-w-full border-collapse text-left text-xs sm:min-w-full sm:text-sm">
-                        <caption class="sr-only">Agenda de meriendas: fecha, día, cereal, responsables de fruta y elaboración, enlace al calendario</caption>
+                        <caption class="sr-only">Agenda de meriendas: fecha, día, cereal, responsables de fruta y elaboración, enlace para añadir el día en Google Calendar</caption>
                         <thead>
                             <tr class="border-b border-white/20 bg-[#9370DB] text-white">
                                 <th scope="col" class="px-2 py-2.5 text-[0.65rem] font-semibold uppercase tracking-wide text-white sm:px-5 sm:py-3.5 sm:text-xs sm:tracking-wider">Fecha</th>
@@ -255,11 +256,11 @@
                                 <th scope="col" class="hidden px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-white sm:table-cell sm:px-5">Fruta</th>
                                 <th scope="col" class="hidden px-4 py-3.5 text-xs font-semibold uppercase tracking-wider text-white sm:table-cell sm:px-5">Elaboración</th>
                                 <th scope="col" class="w-px whitespace-nowrap px-1 py-2.5 text-center text-white sm:w-auto sm:px-5 sm:py-3.5 sm:text-left">
-                                    <span class="hidden sm:inline text-xs font-semibold uppercase tracking-wider">Calendario</span>
+                                    <span class="hidden sm:inline text-xs font-semibold uppercase tracking-wider">Google Calendar</span>
                                     <span class="inline-flex justify-center sm:hidden" aria-hidden="true">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white opacity-95" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                                     </span>
-                                    <span class="sr-only sm:hidden">Añadir al calendario</span>
+                                    <span class="sr-only sm:hidden">Añadir en Google Calendar</span>
                                 </th>
                             </tr>
                         </thead>
@@ -350,12 +351,12 @@
                                     </td>
                                     <td class="px-1 py-2 align-top sm:px-5 sm:py-3.5">
                                         <a
-                                            href="{{ route('agenda.dia.ical', ['fecha' => $fila['fecha']]) }}"
+                                            href="{{ $urlsGoogleCalendarPorFecha[$fila['fecha']] ?? 'https://calendar.google.com/calendar/u/0/r' }}"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             class="inline-flex items-center justify-center rounded-lg p-1.5 text-indigo-700 outline-none ring-indigo-400 hover:bg-indigo-50 hover:text-indigo-900 focus-visible:ring-2 sm:gap-2 sm:px-2 sm:py-1.5 sm:text-sm sm:font-medium sm:underline sm:decoration-indigo-300 sm:underline-offset-2"
-                                            title="Añadir este día al calendario del teléfono"
-                                            aria-label="Añadir al calendario el día {{ $fechaCarbon->format('d/m/Y') }}"
+                                            title="Abrir Google Calendar para añadir este día (merienda)"
+                                            aria-label="Añadir en Google Calendar el día {{ $fechaCarbon->format('d/m/Y') }}"
                                         >
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 text-indigo-600 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                                             <span class="hidden sm:inline">Añadir</span>
@@ -367,7 +368,7 @@
                     </table>
                 </div>
                 <p class="mt-3 text-xs leading-relaxed text-slate-600">
-                    En el móvil, la tabla muestra <strong>fecha</strong> (día abreviado y color Waldorf en el borde), <strong>cereal</strong>, <strong>merienda</strong> (fruta y elaboración) y un icono para <strong>añadir al calendario</strong> (se abre en una pestaña nueva; en iPhone suele ofrecer guardar en Calendario). En pantalla grande aparece la columna <strong>Día</strong> completa
+                    En el móvil, la tabla muestra <strong>fecha</strong> (día abreviado y color Waldorf en el borde), <strong>cereal</strong>, <strong>merienda</strong> (fruta y elaboración) y un enlace a <strong>Google Calendar</strong> para crear el evento del día (se abre en una pestaña nueva; hace falta cuenta de Google). La exportación <strong>iCal (.ics)</strong> del bloque de arriba sigue sirviendo para otros calendarios. En pantalla grande aparece la columna <strong>Día</strong> completa
                     (<a href="{{ route('colores.por.dia') }}" class="font-medium text-[#9370DB] underline decoration-violet-300 underline-offset-2 hover:text-[#7b5cbf]">colores por día</a>).
                     La fila de <strong>hoy</strong> lleva franja verde a la izquierda y la etiqueta «Hoy».
                 </p>
