@@ -22,10 +22,20 @@ class CumpleanosController extends Controller
 
         $cumpleanosAnuales = $this->recolectandoService->cumpleanosConFamiliaEncargada();
         $filas = array_map(function (array $item): array {
+            $familiasEncargadas = $item['familias_encargadas'] ?? [];
+            $familiaEncargadaTexto = 'Sin familia asignada';
+            if ($familiasEncargadas !== []) {
+                $nombres = array_map(
+                    fn ($familia): string => $familia->nombre_para_listado,
+                    $familiasEncargadas
+                );
+                $familiaEncargadaTexto = implode(' / ', $nombres);
+            }
+
             return [
                 'nino' => (string) $item['alumno']->nombre,
                 'fecha_cumpleanos' => $item['fecha_cumpleanos']->copy()->locale('es')->isoFormat('DD/MM'),
-                'familia_encargada' => $item['familia_encargada']?->nombre_para_listado ?? 'Sin familia asignada',
+                'familia_encargada' => $familiaEncargadaTexto,
             ];
         }, $cumpleanosAnuales);
         $titulo = Carbon::today()->locale('es')->isoFormat('YYYY');

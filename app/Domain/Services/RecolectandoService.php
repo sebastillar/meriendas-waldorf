@@ -124,13 +124,13 @@ class RecolectandoService
      * @return array<int, array{
      *   alumno: Alumno,
      *   fecha_cumpleanos: \Carbon\Carbon,
-     *   familia_encargada: ?Familia
+     *   familias_encargadas: array<int, Familia>
      * }>
      */
     public function cumpleanosConFamiliaEncargada(): array
     {
         $anio = (int) Carbon::today()->year;
-        $familiasActivas = $this->familiaRepository->activas();
+        $familias = $this->familiaRepository->todos();
 
         $alumnos = $this->alumnoRepository->activos()
             ->filter(fn (Alumno $a) => $a->fecha_cumpleanos !== null)
@@ -143,16 +143,17 @@ class RecolectandoService
             }
 
             $familiaBeneficiariaId = (int) $alumno->familia->id;
-            $familiaEncargada = $familiasActivas->first(
-                fn (Familia $f) => (int) $f->familia_regalo_id === $familiaBeneficiariaId
-            );
+            $familiasEncargadas = $familias
+                ->filter(fn (Familia $f) => (int) $f->familia_regalo_id === $familiaBeneficiariaId)
+                ->values()
+                ->all();
             $cumple = $alumno->fecha_cumpleanos;
             $fechaCumpleEsteAnio = Carbon::createFromDate($anio, $cumple->month, $cumple->day)->startOfDay();
 
             $out[] = [
                 'alumno' => $alumno,
                 'fecha_cumpleanos' => $fechaCumpleEsteAnio,
-                'familia_encargada' => $familiaEncargada ?: null,
+                'familias_encargadas' => $familiasEncargadas,
             ];
         }
 

@@ -27,7 +27,11 @@ class CumpleanosPageTest extends TestCase
         $familiaRecolectora->id = 21;
         $familiaRecolectora->setRelation('alumnos', new Collection([$alumno]));
 
-        $this->mock(RecolectandoService::class, function ($mock) use ($alumno, $alumnoDos, $familiaRecolectora): void {
+        $familiaRecolectoraDos = new Familia();
+        $familiaRecolectoraDos->id = 22;
+        $familiaRecolectoraDos->setRelation('alumnos', new Collection([$alumnoDos]));
+
+        $this->mock(RecolectandoService::class, function ($mock) use ($alumno, $alumnoDos, $familiaRecolectora, $familiaRecolectoraDos): void {
             $mock->shouldReceive('recolectasDelMesActual')
                 ->once()
                 ->andReturn([
@@ -57,7 +61,7 @@ class CumpleanosPageTest extends TestCase
                     [
                         'alumno' => $alumno,
                         'fecha_cumpleanos' => Carbon::create(2026, 3, 27)->startOfDay(),
-                        'familia_encargada' => $familiaRecolectora,
+                        'familias_encargadas' => [$familiaRecolectora, $familiaRecolectoraDos],
                     ],
                 ]);
         });
@@ -70,5 +74,6 @@ class CumpleanosPageTest extends TestCase
         $response->assertSee('Olivia', false);
         $response->assertSee('Mateo', false);
         $response->assertSee('27/03', false);
+        $response->assertSee('Olivia / Mateo', false);
     }
 }
