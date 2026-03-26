@@ -207,9 +207,10 @@ class AgendaPublicController extends Controller
             abort(404);
         }
         $ics = $this->agendaIcalService->generarIcsUnDia($fila);
+        // inline: Safari iOS suele fallar con attachment ("no se puede descargar"); abre Calendario o muestra el evento.
         return response($ics, 200, [
             'Content-Type' => 'text/calendar; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="merienda-' . $fecha . '.ics"',
+            'Content-Disposition' => 'inline; filename="merienda-' . $fecha . '.ics"',
         ]);
     }
 }
