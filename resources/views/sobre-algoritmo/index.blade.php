@@ -12,7 +12,7 @@
         <div class="prose prose-purple max-w-none">
             <h2 class="text-xl font-semibold text-[#9370DB] mt-8 mb-3">¿Qué hace el algoritmo?</h2>
             <p class="text-gray-700">
-                Cada día en que hay merienda (días laborables que no son feriados ni “días sin clase”), se necesitan dos familias: una lleva la <strong>fruta</strong> y otra se encarga de la <strong>elaboración</strong>. La misma familia no puede hacer las dos cosas el mismo día. El algoritmo asigna automáticamente quién hace cada tarea para repartir la carga de forma equitativa.
+                Cada día en que hay merienda (días laborables que no son feriados ni “días sin clase”), se necesitan dos familias: una lleva la <strong>fruta</strong> y otra se encarga de la <strong>elaboración</strong>. La misma familia no puede hacer las dos cosas el mismo día. El algoritmo asigna automáticamente quién hace cada tarea para repartir la carga de forma equitativa <strong>dentro del mes que se genera</strong>, sin usar cuántas veces llevó fruta o elaboró en meses anteriores.
             </p>
 
             <h2 class="text-xl font-semibold text-[#9370DB] mt-8 mb-3">Días en que hay merienda</h2>
@@ -29,7 +29,7 @@
 flowchart TD
     A[Inicio: mes a generar] --> B[Obtener días lectivos del mes]
     B --> C[Por cada día lectivo]
-    C --> D[Obtener conteos hasta ayer de cada alumno]
+    C --> D[Conteos solo del mes en curso acumulados día a día]
     D --> E[Elegir alumno para FRUTA]
     E --> F[Elegir alumno para ELABORACIÓN distinto al de fruta]
     F --> G{¿Ambos elegidos?}
@@ -56,7 +56,7 @@ flowchart TD
             <ol class="list-decimal list-inside text-gray-700 space-y-2">
                 <li><strong>Menor cantidad de veces en ese rol en la semana</strong> (lunes–domingo): se prioriza a quien menos veces ha llevado fruta o elaborado dentro de esa semana.</li>
                 <li><strong>Equilibrio entre fruta y elaboración</strong> para esa familia (antes del conteo total del rol): al elegir fruta, favorece a quien tiene más elaboraciones que frutas; al elegir elaboración, a quien tiene más frutas que elaboraciones. Así no gana elaboración “por ser el único con menos elaboraciones en el mes” si ya lleva muchas elaboraciones y pocas frutas.</li>
-                <li><strong>Menor cantidad de veces en ese rol en total</strong> hasta ese momento (historial hasta ayer más lo ya generado del mes), entre quienes empatan en lo anterior.</li>
+                <li><strong>Menor cantidad de veces en ese rol en el mes que se está generando</strong> (solo lo acumulado desde el primer día de ese mes en adelante; no se usan totales de meses anteriores), entre quienes empatan en lo anterior.</li>
                 <li>Después se prioriza a quien <strong>hace más tiempo</strong> que no hacía ese rol (fecha de última vez más antigua, o nunca haberlo hecho).</li>
                 <li>Si sigue el empate, <strong>desempate aleatorio</strong> determinista (misma fecha y mismo rol dan siempre el mismo resultado).</li>
             </ol>
@@ -82,7 +82,7 @@ flowchart TD
 
             <h2 class="text-xl font-semibold text-[#9370DB] mt-8 mb-3">Generación automática del mes siguiente</h2>
             <p class="text-gray-700">
-                Las asignaciones del <strong>mes siguiente</strong> se recalculan y generan automáticamente el <strong>día {{ $dia_recalculo_asignaciones }} de cada mes</strong>. Ese día el sistema elimina las asignaciones ya generadas para el mes próximo y las vuelve a generar con el historial actualizado (incluidos los intercambios del mes en curso), de modo que el reparto se mantenga equitativo.
+                Las asignaciones del <strong>mes siguiente</strong> se recalculan y generan automáticamente el <strong>día {{ $dia_recalculo_asignaciones }} de cada mes</strong>. Ese día el sistema elimina las asignaciones ya generadas para el mes próximo y las vuelve a generar: el reparto equitativo de fruta y elaboración se calcula <strong>solo dentro de ese mes</strong> (no arrastra conteos de meses viejos). Los intercambios u otros cambios del mes en curso siguen reflejados en la agenda, pero cada mes nuevo parte de cero para esos totales.
             </p>
 
             <h2 class="text-xl font-semibold text-[#9370DB] mt-8 mb-3">Resumen</h2>
@@ -90,7 +90,7 @@ flowchart TD
                 <li>Solo se asignan <strong>días lectivos</strong> (lun–vie, sin días sin clase).</li>
                 <li>Cada día hay <strong>una familia para fruta</strong> y <strong>otra para elaboración</strong>.</li>
                 <li>Dentro de cada semana (lun–dom), por cada rol se prioriza <strong>no repetir ese rol</strong> hasta que el resto haya igualado el turno en esa semana.</li>
-                <li>Tras la semana, se prioriza <strong>equilibrio fruta vs elaboración</strong>, luego el conteo global del rol y la antigüedad en ese rol.</li>
+                <li>Tras la semana, se prioriza <strong>equilibrio fruta vs elaboración</strong>, luego el conteo del rol <strong>solo en el mes generado</strong> y la antigüedad en ese rol.</li>
                 <li>El desempate final es <strong>aleatorio pero fijo</strong> para la misma fecha y rol.</li>
                 <li>El mes siguiente se recalcula y se genera automáticamente el día {{ $dia_recalculo_asignaciones }} de cada mes.</li>
             </ul>

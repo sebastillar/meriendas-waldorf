@@ -56,8 +56,18 @@ class GeneradorAgendaService
         $desdeRegeneracion = $desde->copy();
         $conteosSemana = [];
         $generadas = 0;
+        // Equidad solo dentro del mes que se genera: no usar conteos históricos de meses anteriores.
+        $conteosHasta = [];
+        foreach ($alumnosActivos as $alumno) {
+            $conteosHasta[$alumno->id] = [
+                'fruta' => 0,
+                'elaboracion' => 0,
+                'ultima_fruta' => null,
+                'ultima_elaboracion' => null,
+            ];
+        }
 
-        DB::transaction(function () use ($diasLectivos, $alumnosActivos, $desdeRegeneracion, &$conteosSemana, &$generadas) {
+        DB::transaction(function () use ($diasLectivos, $alumnosActivos, $desdeRegeneracion, &$conteosSemana, &$conteosHasta, &$generadas) {
             foreach ($diasLectivos as $fecha) {
                 $weekKey = $this->claveSemanaLunes($fecha);
                 if (! array_key_exists($weekKey, $conteosSemana)) {
@@ -72,7 +82,6 @@ class GeneradorAgendaService
                 $diaIso = $fecha->dayOfWeek === 0 ? 7 : $fecha->dayOfWeek;
                 $cerealModel = $this->cerealPorDiaRepository->getPorDiaSemana($diaIso);
                 $cereal = $cerealModel?->cereal ?? 'Sin cereal';
-                $conteosHasta = $this->asignacionRepository->getConteosPorAlumnoHasta($fecha->copy()->subDay());
 
                 $alumnoFruta = $this->elegirAlumnoParaRol($alumnosActivos, $conteosHasta, $conteosSemana, $weekKey, 'fruta', $fecha, null);
                 $alumnoElab = $this->elegirAlumnoParaRol($alumnosActivos, $conteosHasta, $conteosSemana, $weekKey, 'elaboracion', $fecha, $alumnoFruta?->id);
