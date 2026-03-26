@@ -116,4 +116,38 @@ class GeneradorAgendaServiceTest extends TestCase
             'No debería tocarse elaboración otra vez en la misma semana mientras Gamma aún no elaboró en esa semana'
         );
     }
+
+    public function test_no_alterna_fruta_y_elaboracion_en_dos_dias_lectivos_consecutivos(): void
+    {
+        $this->seedCereales();
+        $this->crearAlumno('Uno');
+        $this->crearAlumno('Dos');
+        $this->crearAlumno('Tres');
+
+        ConfiguracionCalendario::create([
+            'anio' => 2026,
+            'fecha_inicio_clases' => '2026-04-06',
+            'fecha_fin_clases' => '2026-04-07',
+        ]);
+
+        $generador = app(GeneradorAgendaService::class);
+        $generador->generarParaMes(2026, 4);
+
+        $filas = Asignacion::orderBy('fecha')->get();
+        $this->assertCount(2, $filas);
+
+        $dia1 = $filas[0];
+        $dia2 = $filas[1];
+
+        $this->assertNotSame(
+            $dia1->alumno_elaboracion_id,
+            $dia2->alumno_fruta_id,
+            'Quien elaboró el día lectivo anterior no debería llevar fruta al día lectivo siguiente'
+        );
+        $this->assertNotSame(
+            $dia1->alumno_fruta_id,
+            $dia2->alumno_elaboracion_id,
+            'Quien llevó fruta el día lectivo anterior no debería elaborar al día lectivo siguiente'
+        );
+    }
 }

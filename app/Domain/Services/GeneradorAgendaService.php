@@ -12,6 +12,7 @@ use App\Domain\Repositories\DiaSinClaseRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class GeneradorAgendaService
 {
@@ -56,6 +57,8 @@ class GeneradorAgendaService
         $desdeRegeneracion = $desde->copy();
         $conteosSemana = [];
         $generadas = 0;
+        /** @var array<string, Asignacion> Asignaciones ya guardadas en esta corrida (misma transacción anidada), por si el driver no ve aún el INSERT al leer el día lectivo siguiente. */
+        $asignacionesPorFechaYmd = [];
         // Equidad solo dentro del mes que se genera: no usar conteos históricos de meses anteriores.
         $conteosHasta = [];
         foreach ($alumnosActivos as $alumno) {
@@ -67,7 +70,7 @@ class GeneradorAgendaService
             ];
         }
 
-        DB::transaction(function () use ($diasLectivos, $alumnosActivos, $desdeRegeneracion, &$conteosSemana, &$conteosHasta, &$generadas) {
+        DB::transaction(function () use ($diasLectivos, $alumnosActivos, $desdeRegeneracion, &$conteosSemana, &$conteosHasta, &$generadas, &$asignacionesPorFechaYmd) {
             foreach ($diasLectivos as $fecha) {
                 $weekKey = $this->claveSemanaLunes($fecha);
                 if (! array_key_exists($weekKey, $conteosSemana)) {
@@ -83,8 +86,75 @@ class GeneradorAgendaService
                 $cerealModel = $this->cerealPorDiaRepository->getPorDiaSemana($diaIso);
                 $cereal = $cerealModel?->cereal ?? 'Sin cereal';
 
-                $alumnoFruta = $this->elegirAlumnoParaRol($alumnosActivos, $conteosHasta, $conteosSemana, $weekKey, 'fruta', $fecha, null);
-                $alumnoElab = $this->elegirAlumnoParaRol($alumnosActivos, $conteosHasta, $conteosSemana, $weekKey, 'elaboracion', $fecha, $alumnoFruta?->id);
+                $diaPrevioLectivo = $this->diaLectivoAnterior($fecha);
+                $asignacionDiaPrevio = null;
+                if ($diaPrevioLectivo) {
+                    $ymdPrevio = $diaPrevioLectivo->toDateString();
+                    $asignacionDiaPrevio = $asignacionesPorFechaYmd[$ymdPrevio]
+                        ?? $this->asignacionRepository->getPorFecha($diaPrevioLectivo);
+                }
+                $excluirConsecFruta = [];
+                $excluirConsecElaboracion = [];
+                if ($asignacionDiaPrevio) {
+                    $excluirConsecFruta[] = $asignacionDiaPrevio->alumno_elaboracion_id;
+                    $excluirConsecElaboracion[] = $asignacionDiaPrevio->alumno_fruta_id;
+                }
+
+                $alumnoFruta = $this->elegirAlumnoParaRol(
+                    $alumnosActivos,
+                    $conteosHasta,
+                    $conteosSemana,
+                    $weekKey,
+                    'fruta',
+                    $fecha,
+                    null,
+                    $excluirConsecFruta,
+                    true
+                );
+                if ($alumnoFruta === null) {
+                    Log::warning('Generador meriendas: sin candidato para fruta con regla día previo; se relaja consecutividad.', [
+                        'fecha' => $fecha->toDateString(),
+                    ]);
+                    $alumnoFruta = $this->elegirAlumnoParaRol(
+                        $alumnosActivos,
+                        $conteosHasta,
+                        $conteosSemana,
+                        $weekKey,
+                        'fruta',
+                        $fecha,
+                        null,
+                        [],
+                        false
+                    );
+                }
+
+                $alumnoElab = $this->elegirAlumnoParaRol(
+                    $alumnosActivos,
+                    $conteosHasta,
+                    $conteosSemana,
+                    $weekKey,
+                    'elaboracion',
+                    $fecha,
+                    $alumnoFruta?->id,
+                    $excluirConsecElaboracion,
+                    true
+                );
+                if ($alumnoElab === null) {
+                    Log::warning('Generador meriendas: sin candidato para elaboración con regla día previo; se relaja consecutividad.', [
+                        'fecha' => $fecha->toDateString(),
+                    ]);
+                    $alumnoElab = $this->elegirAlumnoParaRol(
+                        $alumnosActivos,
+                        $conteosHasta,
+                        $conteosSemana,
+                        $weekKey,
+                        'elaboracion',
+                        $fecha,
+                        $alumnoFruta?->id,
+                        [],
+                        false
+                    );
+                }
 
                 if ($alumnoFruta && $alumnoElab) {
                     $asignacion = new Asignacion([
@@ -95,6 +165,7 @@ class GeneradorAgendaService
                         'estado' => 'planificada',
                     ]);
                     $this->asignacionRepository->guardar($asignacion);
+                    $asignacionesPorFechaYmd[$fecha->toDateString()] = $asignacion;
                     $generadas++;
 
                     $conteosSemana[$weekKey]['fruta'][$alumnoFruta->id] = ($conteosSemana[$weekKey]['fruta'][$alumnoFruta->id] ?? 0) + 1;
@@ -145,6 +216,23 @@ class GeneradorAgendaService
     }
 
     /**
+     * Último día lectivo estrictamente anterior a {@see $fecha} (laborable y no “sin clase”).
+     */
+    private function diaLectivoAnterior(Carbon $fecha): ?Carbon
+    {
+        $cursor = $fecha->copy()->subDay()->startOfDay();
+        for ($i = 0; $i < 800; $i++) {
+            if ($cursor->isWeekday() && ! $this->diaSinClaseRepository->esDiaSinClase($cursor)) {
+                return $cursor;
+            }
+            $cursor->subDay();
+        }
+
+        return null;
+    }
+
+    /**
+     * @param  array<int, int>  $excluirPorConsecutividad  IDs a excluir por regla día lectivo previo (elaboración→fruta / fruta→elaboración)
      * @param  array<string, array{fruta: array<int, int>, elaboracion: array<int, int>}>  $conteosSemana
      */
     private function elegirAlumnoParaRol(
@@ -154,12 +242,24 @@ class GeneradorAgendaService
         string $weekKey,
         string $rol,
         Carbon $fecha,
-        ?int $excluirAlumnoId
+        ?int $excluirMismoDiaOtroRolId,
+        array $excluirPorConsecutividad = [],
+        bool $aplicarReglaConsecutivos = true
     ): ?Alumno {
         $keyCount = $rol === 'fruta' ? 'fruta' : 'elaboracion';
         $keyLast = $rol === 'fruta' ? 'ultima_fruta' : 'ultima_elaboracion';
 
-        $candidatos = $alumnos->filter(fn ($a) => $a->id !== $excluirAlumnoId)->values();
+        $excluirIds = [];
+        if ($excluirMismoDiaOtroRolId !== null) {
+            $excluirIds[$excluirMismoDiaOtroRolId] = true;
+        }
+        if ($aplicarReglaConsecutivos) {
+            foreach ($excluirPorConsecutividad as $id) {
+                $excluirIds[(int) $id] = true;
+            }
+        }
+
+        $candidatos = $alumnos->filter(fn ($a) => ! isset($excluirIds[$a->id]))->values();
         if ($candidatos->isEmpty()) {
             return null;
         }

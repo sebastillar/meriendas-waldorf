@@ -49,9 +49,17 @@ flowchart TD
                 Si una semana <strong>cruza dos meses</strong> y se regenera el calendario a partir de un día a mitad de semana, las asignaciones <strong>anteriores</strong> a ese día (aunque sigan en el mismo lunes–domingo) cuentan para esos conteos semanales.
             </p>
 
+            <h2 class="text-xl font-semibold text-[#9370DB] mt-8 mb-3">Descanso entre días lectivos seguidos</h2>
+            <p class="text-gray-700 mb-4">
+                Entre dos <strong>días lectivos consecutivos</strong> (sin contar fines de semana ni días sin clase entre medio), una familia <strong>no</strong> pasa de elaborar un día a llevar fruta al siguiente, ni al revés: quien elaboró el último día lectivo no puede llevar fruta al día lectivo siguiente, y quien llevó fruta no puede elaborar al día lectivo siguiente. Se usa la asignación ya guardada del día lectivo anterior (aunque sea de otro mes si la semana cruza el corte).
+            </p>
+            <p class="text-gray-700 mb-4">
+                Si con esa regla no hubiera ningún candidato posible (por ejemplo, muy pocos alumnos activos), el sistema <strong>relaja solo esta regla</strong> ese día para poder cerrar la fila y deja constancia en el registro de la aplicación.
+            </p>
+
             <h2 class="text-xl font-semibold text-[#9370DB] mt-8 mb-3">Criterio para elegir a una familia</h2>
             <p class="text-gray-700 mb-4">
-                Para cada rol (fruta o elaboración), el sistema elige entre los alumnos activos que aún no tienen asignación ese día. La elección sigue estos pasos en orden:
+                Para cada rol (fruta o elaboración), primero se excluyen quienes no pueden tocar ese rol (la otra familia el mismo día, y la regla del día lectivo anterior si aplica). Entre los candidatos restantes, la elección sigue estos pasos en orden:
             </p>
             <ol class="list-decimal list-inside text-gray-700 space-y-2">
                 <li><strong>Menor cantidad de veces en ese rol en la semana</strong> (lunes–domingo): se prioriza a quien menos veces ha llevado fruta o elaborado dentro de esa semana.</li>
@@ -90,6 +98,7 @@ flowchart TD
                 <li>Solo se asignan <strong>días lectivos</strong> (lun–vie, sin días sin clase).</li>
                 <li>Cada día hay <strong>una familia para fruta</strong> y <strong>otra para elaboración</strong>.</li>
                 <li>Dentro de cada semana (lun–dom), por cada rol se prioriza <strong>no repetir ese rol</strong> hasta que el resto haya igualado el turno en esa semana.</li>
+                <li>No se alterna <strong>fruta y elaboración en dos días lectivos seguidos</strong> para la misma familia, salvo relajación por falta de candidatos.</li>
                 <li>Tras la semana, se prioriza <strong>equilibrio fruta vs elaboración</strong>, luego el conteo del rol <strong>solo en el mes generado</strong> y la antigüedad en ese rol.</li>
                 <li>El desempate final es <strong>aleatorio pero fijo</strong> para la misma fecha y rol.</li>
                 <li>El mes siguiente se recalcula y se genera automáticamente el día {{ $dia_recalculo_asignaciones }} de cada mes.</li>
