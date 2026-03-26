@@ -9,6 +9,7 @@
     $inicioSemana = $inicioSemana ?? \Carbon\Carbon::today()->startOfWeek();
     $avisosProximos = $avisosProximos ?? [];
     $estadisticasMes = $estadisticasMes ?? null;
+    $estadisticasMesChartJson = $estadisticasMesChartJson ?? null;
 @endphp
 @extends('layouts.app')
 
@@ -56,6 +57,15 @@
         /* Una sola franja «hoy» en el borde izquierdo de la fila (primera celda) */
         .agenda-tabla tbody tr.agenda-fila-hoy > th:first-child {
             box-shadow: inset 4px 0 0 0 #059669;
+        }
+        details.agenda-mes-stats > summary {
+            list-style: none;
+        }
+        details.agenda-mes-stats > summary::-webkit-details-marker {
+            display: none;
+        }
+        details.agenda-mes-stats[open] > summary .agenda-mes-stats-chevron {
+            transform: rotate(180deg);
         }
     </style>
 @endpush
@@ -163,40 +173,33 @@
                 </div>
 
                 @if ($vista === 'mes' && $estadisticasMes !== null && count($estadisticasMes['filas']) > 0)
-                    <div class="mb-4 p-4 bg-white border border-[#CCCCFF]/60 rounded-lg shadow-sm ring-1 ring-violet-900/5">
-                        <h2 class="text-base font-semibold text-[#9370DB] mb-1">Estadísticas del mes</h2>
-                        @if (! empty($estadisticasMes['periodo_etiqueta']))
-                            <p class="text-xs text-gray-600 mb-3">
-                                Periodo con planificación de meriendas: {{ $estadisticasMes['periodo_etiqueta'] }}
-                                ({{ $estadisticasMes['dias_con_plan'] }} {{ $estadisticasMes['dias_con_plan'] === 1 ? 'día' : 'días' }} con asignación).
+                    @php
+                        $statsChartMinH = max(220, count($estadisticasMes['filas']) * 28);
+                    @endphp
+                    <details id="agenda-mes-stats" class="agenda-mes-stats mb-4 rounded-lg border border-[#CCCCFF]/60 bg-white shadow-sm ring-1 ring-violet-900/5">
+                        <summary class="flex cursor-pointer items-center justify-between gap-3 rounded-lg px-4 py-3 text-[#9370DB] outline-none hover:bg-violet-50/60 focus-visible:ring-2 focus-visible:ring-[#9370DB]/40">
+                            <span class="font-semibold">Ver estadísticas del mes</span>
+                            <svg class="agenda-mes-stats-chevron h-5 w-5 shrink-0 text-[#9370DB] transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </summary>
+                        <div class="border-t border-slate-100 px-4 pb-4 pt-3">
+                            <h2 class="sr-only">Estadísticas del mes</h2>
+                            @if (! empty($estadisticasMes['periodo_etiqueta']))
+                                <p class="text-xs text-gray-600 mb-3">
+                                    Periodo con planificación de meriendas: <strong class="font-medium text-slate-800">{{ $estadisticasMes['periodo_etiqueta'] }}</strong>
+                                    ({{ $estadisticasMes['dias_con_plan'] }} {{ $estadisticasMes['dias_con_plan'] === 1 ? 'día' : 'días' }} con asignación).
+                                </p>
+                            @endif
+                            <p class="text-xs text-slate-600 mb-2">Barras horizontales: elaboración (azul) y fruta (verde) por alumno.</p>
+                            <div class="relative w-full rounded-lg border border-slate-100 bg-slate-50/50 p-2" style="min-height: {{ $statsChartMinH }}px; max-height: 70vh">
+                                <canvas id="agenda-mes-stats-chart" style="max-height: 70vh" aria-label="Gráfico de turnos de elaboración y fruta por alumno en el mes"></canvas>
+                            </div>
+                            <p class="mt-3 text-xs leading-relaxed text-slate-600">
+                                Los números rara vez son idénticos para todos: cada día hay <strong>dos cupos distintos</strong> (fruta y elaboración) y el algoritmo intenta a la vez repartir turnos en el mes, no repetir a la misma familia en la misma semana cuando hay margen, equilibrar fruta vs elaboración por familia y evitar el mismo rol en dos días lectivos seguidos. Eso deja empates que se resuelven con reglas de prioridad y un desempate fijo por fecha, así que es normal ver diferencias de 1–2 turnos entre alumnos si el mes no divide en partes exactas entre todos.
                             </p>
-                        @endif
-                        <div class="overflow-x-auto rounded-lg border border-slate-200">
-                            <table class="min-w-full text-sm text-left border-collapse">
-                                <thead>
-                                    <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
-                                        <th scope="col" class="px-3 py-2 font-semibold">Alumno</th>
-                                        <th scope="col" class="px-3 py-2 font-semibold text-center tabular-nums">Elaboración</th>
-                                        <th scope="col" class="px-3 py-2 font-semibold text-center tabular-nums">Fruta</th>
-                                        <th scope="col" class="px-3 py-2 font-semibold text-center tabular-nums">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100">
-                                    @foreach ($estadisticasMes['filas'] as $filaStat)
-                                        <tr class="hover:bg-violet-50/40">
-                                            <td class="px-3 py-2 font-medium text-slate-900">{{ $filaStat['nombre'] }}</td>
-                                            <td class="px-3 py-2 text-center tabular-nums text-sky-900">{{ $filaStat['elaboracion'] }}</td>
-                                            <td class="px-3 py-2 text-center tabular-nums text-emerald-900">{{ $filaStat['fruta'] }}</td>
-                                            <td class="px-3 py-2 text-center tabular-nums text-slate-700">{{ $filaStat['total'] }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
                         </div>
-                        <p class="mt-3 text-xs leading-relaxed text-slate-600">
-                            Los números rara vez son idénticos para todos: cada día hay <strong>dos cupos distintos</strong> (fruta y elaboración) y el algoritmo intenta a la vez repartir turnos en el mes, no repetir a la misma familia en la misma semana cuando hay margen, equilibrar fruta vs elaboración por familia y evitar el mismo rol en dos días lectivos seguidos. Eso deja empates que se resuelven con reglas de prioridad y un desempate fijo por fecha, así que es normal ver diferencias de 1–2 turnos entre alumnos si el mes no divide en partes exactas entre todos.
-                        </p>
-                    </div>
+                    </details>
                 @endif
 
                 <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-900/5">
@@ -286,3 +289,76 @@
                 </p>
             </div>
 @endsection
+
+@if ($vista === 'mes' && $estadisticasMesChartJson !== null)
+    @push('scripts')
+        <script type="application/json" id="agenda-mes-stats-json">{!! $estadisticasMesChartJson !!}</script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+        <script>
+            (function () {
+                var root = document.getElementById('agenda-mes-stats');
+                var dataEl = document.getElementById('agenda-mes-stats-json');
+                if (!root || !dataEl) return;
+                var payload;
+                try {
+                    payload = JSON.parse(dataEl.textContent);
+                } catch (e) {
+                    return;
+                }
+                root.addEventListener('toggle', function () {
+                    if (!root.open || root.dataset.chartLoaded === '1') return;
+                    root.dataset.chartLoaded = '1';
+                    var canvas = document.getElementById('agenda-mes-stats-chart');
+                    if (!canvas || typeof Chart === 'undefined') return;
+                    var wrap = canvas.closest('.relative');
+                    if (wrap) {
+                        var h = Math.max(220, (payload.labels && payload.labels.length ? payload.labels.length : 1) * 28);
+                        wrap.style.minHeight = h + 'px';
+                    }
+                    new Chart(canvas.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: payload.labels || [],
+                            datasets: [
+                                {
+                                    label: 'Elaboración',
+                                    data: payload.elaboracion || [],
+                                    backgroundColor: 'rgba(14, 165, 233, 0.78)',
+                                    borderColor: 'rgb(2, 132, 199)',
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: 'Fruta',
+                                    data: payload.fruta || [],
+                                    backgroundColor: 'rgba(16, 185, 129, 0.78)',
+                                    borderColor: 'rgb(5, 150, 105)',
+                                    borderWidth: 1
+                                }
+                            ]
+                        },
+                        options: {
+                            indexAxis: 'y',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                x: {
+                                    beginAtZero: true,
+                                    ticks: { stepSize: 1, precision: 0 },
+                                    stacked: false
+                                },
+                                y: {
+                                    ticks: { autoSkip: false },
+                                    stacked: false
+                                }
+                            },
+                            plugins: {
+                                legend: { position: 'bottom' },
+                                tooltip: { mode: 'index', intersect: false }
+                            }
+                        }
+                    });
+                });
+            })();
+        </script>
+    @endpush
+@endif

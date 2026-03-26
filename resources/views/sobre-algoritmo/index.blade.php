@@ -22,7 +22,7 @@
 
             <h2 class="text-xl font-semibold text-[#9370DB] mt-8 mb-3">Flujo general</h2>
             <p class="text-gray-700 mb-4">
-                Para cada mes, el sistema recorre cada día lectivo y, en ese día, asigna primero quién lleva la fruta y después quién hace la elaboración (otra persona). Luego guarda la asignación y actualiza los conteos para el siguiente día. El siguiente diagrama resume este flujo.
+                Para cada mes, el sistema recorre cada día lectivo y, en ese día, asigna primero quién lleva la fruta y después quién hace la elaboración (otra persona). Antes de elegir, se excluyen candidatos que no pueden tocar ese rol (por ejemplo la otra familia el mismo día o la regla del día lectivo inmediatamente anterior). Luego guarda la asignación y actualiza los conteos para el siguiente día. El siguiente diagrama resume este flujo.
             </p>
             <div class="my-6 bg-white border border-[#CCCCFF]/50 rounded-lg p-4 overflow-x-auto">
                 <pre class="mermaid text-center">
@@ -101,7 +101,7 @@ flowchart TD
                 <li>Cada día hay <strong>una familia para fruta</strong> y <strong>otra para elaboración</strong>.</li>
                 <li>Dentro de cada semana (lun–dom) se prioriza <strong>no repetir familia</strong> hasta que el resto haya tenido al menos un turno esa semana (fruta + elaboración cuentan juntos).</li>
                 <li>No se alterna <strong>fruta y elaboración en dos días lectivos seguidos</strong> para la misma familia, salvo relajación por falta de candidatos.</li>
-                <li>Tras la semana, se prioriza <strong>equilibrio fruta vs elaboración</strong>, luego el conteo del rol <strong>solo en el mes generado</strong> y la antigüedad en ese rol.</li>
+                <li>Tras la semana, se prioriza el <strong>menor total de turnos en el mes</strong> (fruta + elaboración), luego el <strong>equilibrio fruta vs elaboración</strong> por familia, el conteo de <strong>ese rol</strong> en el mes y la antigüedad en ese rol.</li>
                 <li>El desempate final es <strong>aleatorio pero fijo</strong> para la misma fecha y rol.</li>
                 <li>El mes siguiente se recalcula y se genera automáticamente el día {{ $dia_recalculo_asignaciones }} de cada mes.</li>
             </ul>

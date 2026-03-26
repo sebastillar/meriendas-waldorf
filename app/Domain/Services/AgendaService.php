@@ -94,7 +94,10 @@ class AgendaService
             ];
         }
 
-        $periodoEtiqueta = $inicio->locale('es')->translatedFormat('d MMM Y') . ' – ' . $fin->locale('es')->translatedFormat('d MMM Y');
+        // isoFormat (tokens tipo Moment); evitar translatedFormat('d MMM Y') que mezcla letras y deja "abril" + mes numérico.
+        $periodoEtiqueta = $inicio->locale('es')->isoFormat('DD [de] MMMM [de] YYYY')
+            . ' – '
+            . $fin->locale('es')->isoFormat('DD [de] MMMM [de] YYYY');
 
         return [
             'filas' => $filas,

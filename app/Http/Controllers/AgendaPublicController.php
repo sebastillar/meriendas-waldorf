@@ -86,10 +86,18 @@ class AgendaPublicController extends Controller
             $alumnoId = null;
         }
 
+        $estadisticasMesChartJson = null;
         if ($vista === 'mes') {
             $filas = $this->agendaService->agendaMes($anio, $mes, $alumnoId);
             $titulo = Carbon::createFromDate($anio, $mes, 1)->locale('es')->translatedFormat('F Y');
             $estadisticasMes = $this->agendaService->estadisticasResumenMes($anio, $mes);
+            if (count($estadisticasMes['filas']) > 0) {
+                $estadisticasMesChartJson = json_encode([
+                    'labels' => array_column($estadisticasMes['filas'], 'nombre'),
+                    'elaboracion' => array_column($estadisticasMes['filas'], 'elaboracion'),
+                    'fruta' => array_column($estadisticasMes['filas'], 'fruta'),
+                ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+            }
         } else {
             $inicioSemana = $request->filled('fecha_inicio')
                 ? Carbon::parse($request->input('fecha_inicio'))->startOfWeek()
@@ -98,6 +106,7 @@ class AgendaPublicController extends Controller
             $finSemana = $inicioSemana->copy()->endOfWeek();
             $titulo = 'Semana del ' . $inicioSemana->format('d/m/Y') . ' al ' . $finSemana->format('d/m/Y');
             $estadisticasMes = null;
+            $estadisticasMesChartJson = null;
         }
 
         $hoy = Carbon::today();
@@ -117,6 +126,7 @@ class AgendaPublicController extends Controller
             'paramsFiltros' => $this->paramsFiltros($request),
             'avisosProximos' => $avisosProximos,
             'estadisticasMes' => $estadisticasMes ?? null,
+            'estadisticasMesChartJson' => $estadisticasMesChartJson,
         ]);
     }
 
