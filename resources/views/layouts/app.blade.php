@@ -13,7 +13,7 @@
                 <div class="flex items-center justify-between flex-wrap gap-2">
                     <div>
                         <h1 class="text-2xl font-semibold">
-                            <a href="{{ route('agenda.public') }}" class="hover:opacity-90">Meriendas Waldorf</a>
+                            <a href="{{ route('agenda.public') }}" class="hover:opacity-90">@yield('title', 'Meriendas - Tercer Año')</a>
                         </h1>
                         <p class="text-sm opacity-90 text-[#FFE4EC]">Sistema de autogestión</p>
                     </div>
