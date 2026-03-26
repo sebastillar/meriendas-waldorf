@@ -2,12 +2,14 @@
 
 use App\Http\Controllers\AgendaPublicController;
 use App\Http\Controllers\ColoresPorDiaController;
+use App\Http\Controllers\CumpleanosController;
 use App\Http\Controllers\ResumenMensualController;
 use App\Http\Controllers\SobreAlgoritmoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AgendaPublicController::class, 'index'])->name('agenda.public');
 Route::get('/resumen-mensual', [ResumenMensualController::class, 'index'])->name('resumen.mensual');
+Route::get('/cumpleanos', [CumpleanosController::class, 'index'])->name('cumpleanos.index');
 Route::get('/sobre-algoritmo', [SobreAlgoritmoController::class, 'index'])->name('sobre.algoritmo');
 Route::get('/colores-por-dia', [ColoresPorDiaController::class, 'index'])->name('colores.por.dia');
 Route::get('/agenda/descargar/csv', [AgendaPublicController::class, 'descargarCsv'])->name('agenda.descargar.csv');

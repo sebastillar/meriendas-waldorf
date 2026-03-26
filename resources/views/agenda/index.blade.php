@@ -202,13 +202,13 @@
                 @if ($vista === 'mes' && $estadisticasMes !== null && count($estadisticasMes['filas']) > 0)
                     <details class="agenda-mes-stats mb-4 rounded-lg border border-[#CCCCFF]/60 bg-white shadow-sm ring-1 ring-violet-900/5">
                         <summary class="flex cursor-pointer items-center justify-between gap-3 rounded-lg px-4 py-3 text-[#9370DB] outline-none hover:bg-violet-50/60 focus-visible:ring-2 focus-visible:ring-[#9370DB]/40">
-                            <span class="font-semibold">Ver estadísticas del mes</span>
+                            <span class="font-semibold">Ver resumen del mes</span>
                             <svg class="agenda-mes-stats-chevron h-5 w-5 shrink-0 text-[#9370DB] transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                             </svg>
                         </summary>
                         <div class="border-t border-slate-100 px-4 pb-4 pt-3">
-                            <h2 class="sr-only">Estadísticas del mes</h2>
+                            <h2 class="sr-only">Resumen del mes</h2>
                             @if (! empty($estadisticasMes['periodo_etiqueta']))
                                 <p class="text-xs text-gray-600 mb-3">
                                     Periodo con planificación de meriendas: <strong class="font-medium text-slate-800">{{ $estadisticasMes['periodo_etiqueta'] }}</strong>
