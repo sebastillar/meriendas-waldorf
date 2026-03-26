@@ -8,6 +8,7 @@
     $paramsFiltros = $paramsFiltros ?? ['vista' => 'semana'];
     $inicioSemana = $inicioSemana ?? \Carbon\Carbon::today()->startOfWeek();
     $avisosProximos = $avisosProximos ?? [];
+    $estadisticasMes = $estadisticasMes ?? null;
 @endphp
 @extends('layouts.app')
 
@@ -160,6 +161,43 @@
                         </a>
                     </div>
                 </div>
+
+                @if ($vista === 'mes' && $estadisticasMes !== null && count($estadisticasMes['filas']) > 0)
+                    <div class="mb-4 p-4 bg-white border border-[#CCCCFF]/60 rounded-lg shadow-sm ring-1 ring-violet-900/5">
+                        <h2 class="text-base font-semibold text-[#9370DB] mb-1">Estadísticas del mes</h2>
+                        @if (! empty($estadisticasMes['periodo_etiqueta']))
+                            <p class="text-xs text-gray-600 mb-3">
+                                Periodo con planificación de meriendas: {{ $estadisticasMes['periodo_etiqueta'] }}
+                                ({{ $estadisticasMes['dias_con_plan'] }} {{ $estadisticasMes['dias_con_plan'] === 1 ? 'día' : 'días' }} con asignación).
+                            </p>
+                        @endif
+                        <div class="overflow-x-auto rounded-lg border border-slate-200">
+                            <table class="min-w-full text-sm text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                        <th scope="col" class="px-3 py-2 font-semibold">Alumno</th>
+                                        <th scope="col" class="px-3 py-2 font-semibold text-center tabular-nums">Elaboración</th>
+                                        <th scope="col" class="px-3 py-2 font-semibold text-center tabular-nums">Fruta</th>
+                                        <th scope="col" class="px-3 py-2 font-semibold text-center tabular-nums">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    @foreach ($estadisticasMes['filas'] as $filaStat)
+                                        <tr class="hover:bg-violet-50/40">
+                                            <td class="px-3 py-2 font-medium text-slate-900">{{ $filaStat['nombre'] }}</td>
+                                            <td class="px-3 py-2 text-center tabular-nums text-sky-900">{{ $filaStat['elaboracion'] }}</td>
+                                            <td class="px-3 py-2 text-center tabular-nums text-emerald-900">{{ $filaStat['fruta'] }}</td>
+                                            <td class="px-3 py-2 text-center tabular-nums text-slate-700">{{ $filaStat['total'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="mt-3 text-xs leading-relaxed text-slate-600">
+                            Los números rara vez son idénticos para todos: cada día hay <strong>dos cupos distintos</strong> (fruta y elaboración) y el algoritmo intenta a la vez repartir turnos en el mes, no repetir a la misma familia en la misma semana cuando hay margen, equilibrar fruta vs elaboración por familia y evitar el mismo rol en dos días lectivos seguidos. Eso deja empates que se resuelven con reglas de prioridad y un desempate fijo por fecha, así que es normal ver diferencias de 1–2 turnos entre alumnos si el mes no divide en partes exactas entre todos.
+                        </p>
+                    </div>
+                @endif
 
                 <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-900/5">
                     <table class="agenda-tabla min-w-full border-collapse text-left">

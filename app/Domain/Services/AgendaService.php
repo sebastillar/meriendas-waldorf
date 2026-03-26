@@ -3,6 +3,7 @@
 namespace App\Domain\Services;
 
 use App\Domain\Models\ConfiguracionCalendario;
+use App\Domain\Repositories\AlumnoRepositoryInterface;
 use App\Domain\Repositories\AsignacionRepositoryInterface;
 use App\Domain\Repositories\DiaSinClaseRepositoryInterface;
 use Carbon\Carbon;
@@ -12,7 +13,8 @@ class AgendaService
 {
     public function __construct(
         private AsignacionRepositoryInterface $asignacionRepository,
-        private DiaSinClaseRepositoryInterface $diaSinClaseRepository
+        private DiaSinClaseRepositoryInterface $diaSinClaseRepository,
+        private AlumnoRepositoryInterface $alumnoRepository
     ) {}
 
     /**
@@ -43,6 +45,69 @@ class AgendaService
      */
     public function agendaMes(int $anio, int $mes, ?int $alumnoId = null): array
     {
+        $rango = $this->rangoCalendarioMes($anio, $mes);
+        if ($rango === null) {
+            return [];
+        }
+        [$inicio, $fin] = $rango;
+        $filas = $this->construirAgenda($inicio, $fin);
+        return $alumnoId !== null ? $this->filtrarFilasPorAlumno($filas, $alumnoId) : $filas;
+    }
+
+    /**
+     * Conteos de fruta y elaboración por alumno activo en el mismo rango de fechas que la vista mensual de la agenda.
+     *
+     * @return array{filas: array<int, array{id: int, nombre: string, elaboracion: int, fruta: int, total: int}>, dias_con_plan: int, periodo_etiqueta: string}
+     */
+    public function estadisticasResumenMes(int $anio, int $mes): array
+    {
+        $rango = $this->rangoCalendarioMes($anio, $mes);
+        if ($rango === null) {
+            return [
+                'filas' => [],
+                'dias_con_plan' => 0,
+                'periodo_etiqueta' => '',
+            ];
+        }
+        [$inicio, $fin] = $rango;
+        $asignaciones = $this->asignacionRepository->getEntreFechas($inicio, $fin);
+
+        $frutaPorId = [];
+        $elabPorId = [];
+        foreach ($asignaciones as $a) {
+            $fid = (int) $a->alumno_fruta_id;
+            $eid = (int) $a->alumno_elaboracion_id;
+            $frutaPorId[$fid] = ($frutaPorId[$fid] ?? 0) + 1;
+            $elabPorId[$eid] = ($elabPorId[$eid] ?? 0) + 1;
+        }
+
+        $filas = [];
+        foreach ($this->alumnoRepository->activos()->sortBy(fn ($a) => mb_strtolower($a->nombre ?? '')) as $alumno) {
+            $f = (int) ($frutaPorId[$alumno->id] ?? 0);
+            $e = (int) ($elabPorId[$alumno->id] ?? 0);
+            $filas[] = [
+                'id' => $alumno->id,
+                'nombre' => $alumno->nombre,
+                'elaboracion' => $e,
+                'fruta' => $f,
+                'total' => $e + $f,
+            ];
+        }
+
+        $periodoEtiqueta = $inicio->locale('es')->translatedFormat('d MMM Y') . ' – ' . $fin->locale('es')->translatedFormat('d MMM Y');
+
+        return [
+            'filas' => $filas,
+            'dias_con_plan' => $asignaciones->count(),
+            'periodo_etiqueta' => $periodoEtiqueta,
+        ];
+    }
+
+    /**
+     * @return array{0: Carbon, 1: Carbon}|null [inicio, fin] inclusive; null si el mes queda fuera del calendario escolar.
+     */
+    private function rangoCalendarioMes(int $anio, int $mes): ?array
+    {
         $inicio = Carbon::createFromDate($anio, $mes, 1)->startOfDay();
         $config = ConfiguracionCalendario::where('anio', $anio)->first();
         if ($config && $config->fecha_inicio_clases && $config->fecha_inicio_clases->gt($inicio)) {
@@ -50,15 +115,15 @@ class AgendaService
         }
         $finMes = Carbon::createFromDate($anio, $mes, 1)->endOfMonth();
         if ($config && $config->fecha_fin_clases && $config->fecha_fin_clases->lt($inicio)) {
-            return [];
+            return null;
         }
         if ($config && $config->fecha_fin_clases && $config->fecha_fin_clases->lt($finMes)) {
             $fin = $config->fecha_fin_clases->copy()->startOfDay();
         } else {
             $fin = $finMes;
         }
-        $filas = $this->construirAgenda($inicio, $fin);
-        return $alumnoId !== null ? $this->filtrarFilasPorAlumno($filas, $alumnoId) : $filas;
+
+        return [$inicio, $fin];
     }
 
     /**

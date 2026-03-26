@@ -89,6 +89,7 @@ class AgendaPublicController extends Controller
         if ($vista === 'mes') {
             $filas = $this->agendaService->agendaMes($anio, $mes, $alumnoId);
             $titulo = Carbon::createFromDate($anio, $mes, 1)->locale('es')->translatedFormat('F Y');
+            $estadisticasMes = $this->agendaService->estadisticasResumenMes($anio, $mes);
         } else {
             $inicioSemana = $request->filled('fecha_inicio')
                 ? Carbon::parse($request->input('fecha_inicio'))->startOfWeek()
@@ -96,6 +97,7 @@ class AgendaPublicController extends Controller
             $filas = $this->agendaService->agendaSemana($inicioSemana, $alumnoId);
             $finSemana = $inicioSemana->copy()->endOfWeek();
             $titulo = 'Semana del ' . $inicioSemana->format('d/m/Y') . ' al ' . $finSemana->format('d/m/Y');
+            $estadisticasMes = null;
         }
 
         $hoy = Carbon::today();
@@ -114,6 +116,7 @@ class AgendaPublicController extends Controller
             'alumnoIdFiltro' => $alumnoId,
             'paramsFiltros' => $this->paramsFiltros($request),
             'avisosProximos' => $avisosProximos,
+            'estadisticasMes' => $estadisticasMes ?? null,
         ]);
     }
 

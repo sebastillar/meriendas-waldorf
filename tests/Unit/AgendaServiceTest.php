@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Domain\Models\ConfiguracionCalendario;
+use App\Domain\Repositories\AlumnoRepositoryInterface;
 use App\Domain\Repositories\AsignacionRepositoryInterface;
 use App\Domain\Repositories\DiaSinClaseRepositoryInterface;
 use App\Domain\Services\AgendaService;
@@ -39,7 +40,10 @@ class AgendaServiceTest extends TestCase
 
         $diaSinClaseRepo->method('fechasEntre')->willReturn(new Collection());
 
-        $service = new AgendaService($asignacionRepo, $diaSinClaseRepo);
+        $alumnoRepo = $this->createMock(AlumnoRepositoryInterface::class);
+        $alumnoRepo->method('activos')->willReturn(new Collection());
+
+        $service = new AgendaService($asignacionRepo, $diaSinClaseRepo, $alumnoRepo);
 
         $service->agendaSemana(Carbon::create(2026, 3, 1));
     }
@@ -60,7 +64,10 @@ class AgendaServiceTest extends TestCase
             Carbon::create(2026, 3, 4),
         ]));
 
-        $service = new AgendaService($asignacionRepo, $diaSinClaseRepo);
+        $alumnoRepo = $this->createMock(AlumnoRepositoryInterface::class);
+        $alumnoRepo->method('activos')->willReturn(new Collection());
+
+        $service = new AgendaService($asignacionRepo, $diaSinClaseRepo, $alumnoRepo);
 
         $filas = $service->agendaSemana($inicio);
 
