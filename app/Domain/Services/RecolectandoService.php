@@ -118,6 +118,49 @@ class RecolectandoService
         return $out;
     }
 
+    /**
+     * Cumpleaños de todo el año (alumnos activos con fecha cargada) y su familia encargada de la colecta.
+     *
+     * @return array<int, array{
+     *   alumno: Alumno,
+     *   fecha_cumpleanos: \Carbon\Carbon,
+     *   familia_encargada: ?Familia
+     * }>
+     */
+    public function cumpleanosConFamiliaEncargada(): array
+    {
+        $anio = (int) Carbon::today()->year;
+        $familiasActivas = $this->familiaRepository->activas();
+
+        $alumnos = $this->alumnoRepository->activos()
+            ->filter(fn (Alumno $a) => $a->fecha_cumpleanos !== null)
+            ->values();
+
+        $out = [];
+        foreach ($alumnos as $alumno) {
+            if (!$alumno->familia_id || !$alumno->familia) {
+                continue;
+            }
+
+            $familiaBeneficiariaId = (int) $alumno->familia->id;
+            $familiaEncargada = $familiasActivas->first(
+                fn (Familia $f) => (int) $f->familia_regalo_id === $familiaBeneficiariaId
+            );
+            $cumple = $alumno->fecha_cumpleanos;
+            $fechaCumpleEsteAnio = Carbon::createFromDate($anio, $cumple->month, $cumple->day)->startOfDay();
+
+            $out[] = [
+                'alumno' => $alumno,
+                'fecha_cumpleanos' => $fechaCumpleEsteAnio,
+                'familia_encargada' => $familiaEncargada ?: null,
+            ];
+        }
+
+        usort($out, fn ($a, $b) => $a['fecha_cumpleanos']->lt($b['fecha_cumpleanos']) ? -1 : 1);
+
+        return $out;
+    }
+
     private function alumnoConProximoCumpleanos(): ?Alumno
     {
         $hoy = Carbon::today();

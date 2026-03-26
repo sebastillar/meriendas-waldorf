@@ -1,6 +1,7 @@
 @php
     $filas = $filas ?? [];
-    $titulo = $titulo ?? now()->locale('es')->isoFormat('MMMM [de] YYYY');
+    $titulo = $titulo ?? now()->locale('es')->isoFormat('YYYY');
+    $colectasEnCurso = $colectasEnCurso ?? [];
 @endphp
 @extends('layouts.app')
 
@@ -10,21 +11,25 @@
     <div class="max-w-5xl mx-auto px-4 py-6">
         <section class="mb-6 py-6 px-4 rounded-lg bg-[#FF4081]/10 border border-[#FF4081]/30">
             <h2 class="text-2xl font-semibold text-[#9370DB]">Cumpleaños</h2>
-            <p class="text-sm text-gray-600 mt-1">Cumpleaños y familias encargadas del mes de {{ $titulo }}.</p>
+            <p class="text-sm text-gray-600 mt-1">Cumpleaños y familias encargadas de {{ $titulo }}.</p>
         </section>
 
-        @if (! empty($recolectaActual))
-            <div class="mb-6 p-4 rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-900" role="status">
-                <p class="text-sm">
-                    <strong>Colecta en curso:</strong>
-                    regalo para <strong>{{ $recolectaActual['alumno_beneficiario']->nombre }}</strong>,
-                    coordinada por la familia de <strong>{{ $recolectaActual['familia_recolectora']->nombre_para_listado }}</strong>.
-                </p>
-                @if (($recolectaActual['total_count'] ?? 0) > 0)
-                    <p class="text-xs mt-1 text-emerald-800">
-                        Aportes registrados: {{ $recolectaActual['aportaron_count'] }} / {{ $recolectaActual['total_count'] }}.
-                    </p>
-                @endif
+        @if (! empty($colectasEnCurso))
+            <div class="mb-6 rounded-lg border border-emerald-300 bg-emerald-50 p-4 text-emerald-900" role="status">
+                <p class="text-sm font-semibold">Colectas en curso</p>
+                <div class="mt-3 space-y-2">
+                    @foreach ($colectasEnCurso as $colecta)
+                        <div class="rounded-md border border-emerald-200 bg-white/70 px-3 py-2 text-sm">
+                            Regalo para <strong>{{ $colecta['alumno_beneficiario']->nombre }}</strong>,
+                            coordinada por la familia de <strong>{{ $colecta['familia_recolectora']->nombre_para_listado }}</strong>.
+                            @if (($colecta['total_count'] ?? 0) > 0)
+                                <span class="text-xs text-emerald-800">
+                                    (Aportes: {{ $colecta['aportaron_count'] }} / {{ $colecta['total_count'] }})
+                                </span>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
             </div>
         @endif
 
@@ -47,7 +52,7 @@
                     @empty
                         <tr>
                             <td colspan="3" class="px-4 py-6 text-center text-sm text-gray-500">
-                                No hay cumpleaños cargados para este mes.
+                                No hay cumpleaños cargados.
                             </td>
                         </tr>
                     @endforelse

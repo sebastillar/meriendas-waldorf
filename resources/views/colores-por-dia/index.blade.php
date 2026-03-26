@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Colores por día – Meriendas Waldorf')
+@section('title', 'Ritmo de la semana – Meriendas Waldorf')
 
 @push('styles')
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +38,7 @@
         <div class="max-w-4xl mx-auto px-4 py-10 md:py-14">
             <header class="text-center mb-12 md:mb-16">
                 <p class="text-sm font-medium tracking-wide text-[#9370DB]/90 uppercase mb-2">Ritmo de la semana</p>
-                <h1 class="text-4xl md:text-5xl font-semibold text-[#5c4d7a] leading-tight">Colores por día</h1>
+                <h1 class="text-4xl md:text-5xl font-semibold text-[#5c4d7a] leading-tight">Ritmo de la semana</h1>
             </header>
 
             <div class="space-y-10 md:space-y-12">
@@ -76,6 +76,14 @@
                                 <p class="mt-1 text-xl md:text-2xl font-display italic {{ $dia['accent_text'] }}">
                                     {{ $dia['nombre_color'] }}
                                 </p>
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <span class="inline-flex items-center rounded-full border border-stone-300/70 bg-white/70 px-3 py-1 text-xs font-semibold text-stone-700">
+                                        Cereal: {{ $dia['cereal'] }}
+                                    </span>
+                                    <span class="inline-flex items-center rounded-full border border-stone-300/70 bg-white/70 px-3 py-1 text-xs font-semibold text-stone-700">
+                                        Planeta: {{ $dia['planeta'] }}
+                                    </span>
+                                </div>
                                 <p class="mt-4 text-stone-700 text-base md:text-lg leading-relaxed max-w-xl">
                                     {{ $dia['descripcion'] }}
                                 </p>

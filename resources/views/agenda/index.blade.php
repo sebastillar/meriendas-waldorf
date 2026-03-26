@@ -369,7 +369,7 @@
                 </div>
                 <p class="mt-3 text-xs leading-relaxed text-slate-600">
                     En el móvil, la tabla muestra <strong>fecha</strong> (día abreviado y color Waldorf en el borde), <strong>cereal</strong>, <strong>merienda</strong> (fruta y elaboración) y un enlace a <strong>Google Calendar</strong> para crear el evento del día (se abre en una pestaña nueva; hace falta cuenta de Google). La exportación <strong>iCal (.ics)</strong> del bloque de arriba sigue sirviendo para otros calendarios. En pantalla grande aparece la columna <strong>Día</strong> completa
-                    (<a href="{{ route('colores.por.dia') }}" class="font-medium text-[#9370DB] underline decoration-violet-300 underline-offset-2 hover:text-[#7b5cbf]">colores por día</a>).
+                    (<a href="{{ route('colores.por.dia') }}" class="font-medium text-[#9370DB] underline decoration-violet-300 underline-offset-2 hover:text-[#7b5cbf]">ritmo de la semana</a>).
                     La fila de <strong>hoy</strong> lleva franja verde a la izquierda y la etiqueta «Hoy».
                 </p>
             </div>
