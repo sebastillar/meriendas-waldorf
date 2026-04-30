@@ -191,6 +191,56 @@ class GeneradorAgendaService
     }
 
     /**
+     * Devuelve estado de cobertura del mes lectivo objetivo.
+     *
+     * @return array{dias_lectivos_total: int, dias_lectivos_cubiertos: int, completo: bool}
+     */
+    public function estadoCoberturaMes(int $anio, int $mes): array
+    {
+        $desdeMes = Carbon::createFromDate($anio, $mes, 1)->startOfDay();
+        $config = ConfiguracionCalendario::where('anio', $anio)->first();
+        if ($config && $config->fecha_inicio_clases) {
+            $inicioClasesCarbon = $config->fecha_inicio_clases->copy()->startOfDay();
+            $desde = $inicioClasesCarbon->greaterThan($desdeMes) ? $inicioClasesCarbon : $desdeMes;
+        } else {
+            $desde = $desdeMes;
+        }
+        $hastaMes = $desdeMes->copy()->endOfMonth();
+        if ($config && $config->fecha_fin_clases) {
+            $finClasesCarbon = $config->fecha_fin_clases->copy()->startOfDay();
+            $hasta = $finClasesCarbon->lessThan($hastaMes) ? $finClasesCarbon : $hastaMes;
+        } else {
+            $hasta = $hastaMes;
+        }
+
+        $diasLectivos = $this->obtenerDiasLectivos($desde, $hasta);
+        $diasLectivosTotal = $diasLectivos->count();
+        if ($diasLectivosTotal === 0) {
+            return [
+                'dias_lectivos_total' => 0,
+                'dias_lectivos_cubiertos' => 0,
+                'completo' => true,
+            ];
+        }
+
+        $asignaciones = $this->asignacionRepository->getEntreFechas($desde, $hasta);
+        $diasLectivosPorFecha = $diasLectivos
+            ->map(fn (Carbon $fecha) => $fecha->toDateString())
+            ->flip();
+        $diasLectivosCubiertos = $asignaciones
+            ->map(fn (Asignacion $asignacion) => Carbon::parse($asignacion->fecha)->toDateString())
+            ->unique()
+            ->filter(fn (string $fecha) => $diasLectivosPorFecha->has($fecha))
+            ->count();
+
+        return [
+            'dias_lectivos_total' => $diasLectivosTotal,
+            'dias_lectivos_cubiertos' => $diasLectivosCubiertos,
+            'completo' => $diasLectivosCubiertos >= $diasLectivosTotal,
+        ];
+    }
+
+    /**
      * Clave estable de la semana (lunes de esa semana en formato Y-m-d).
      */
     private function claveSemanaLunes(Carbon $fecha): string

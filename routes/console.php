@@ -14,7 +14,7 @@ Schedule::job(EnviarRecordatoriosMerienda::class)
     ->name('recordatorios-merienda');
 
 Schedule::command('meriendas:generar-mes-siguiente')
-    ->monthlyOn(config('meriendas.asignacion.dia_recalculo_mes_siguiente', 25), '00:00')
+    ->dailyAt('00:05')
     ->name('generar-asignaciones-mes-siguiente');
 
 Schedule::command('meriendas:limpiar-notificaciones')

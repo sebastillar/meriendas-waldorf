@@ -95,7 +95,7 @@ Ajustar `/ruta/al/proyecto` a la raíz de esta aplicación.
 | Tarea                         | Frecuencia        | Descripción |
 |------------------------------|-------------------|-------------|
 | Recordatorios de merienda    | Cada 12 horas (`08:00` y `20:00` por defecto) | Prepara y envía notificaciones de merienda para el día siguiente (y el lunes si hoy es viernes), con hasta 2 intentos por día. |
-| Generar mes siguiente        | Un día al mes     | El día configurado (`MERIENDAS_DIA_RECALCULO_ASIGNACIONES`, por defecto **25**) a las 00:00 se recalculan y generan las asignaciones del **mes siguiente**. |
+| Generar mes siguiente        | Diario (`00:05`)  | Desde el día configurado (`MERIENDAS_DIA_RECALCULO_ASIGNACIONES`, por defecto **25**) intenta generar el **mes siguiente**. Si el mes ya está completo, se omite para evitar regeneraciones. |
 | Limpiar notificaciones       | Semanal (lunes 03:00) | Elimina registros de notificaciones de merienda de semanas anteriores, manteniendo solo la semana actual. |
 
 Si no se ejecuta el cron, no se enviarán recordatorios ni se generarán automáticamente las asignaciones del mes siguiente.
