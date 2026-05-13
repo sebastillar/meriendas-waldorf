@@ -80,10 +80,12 @@ class ProximaMeriendaPageTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('Hoy', false);
-        $response->assertSee('Arroz', false);
-        $response->assertSee('Familia García', false);
-        $response->assertSee('Familia López', false);
-        $response->assertSee('☽', false);
+        $response->assertSee('Lucía', false);      // nombre del niño — primera jerarquía
+        $response->assertSee('Tomás', false);       // nombre del niño — primera jerarquía
+        $response->assertSee('Fruta', false);       // rol
+        $response->assertSee('Elaboración', false); // rol
+        $response->assertSee('Arroz', false);       // cereal junto a elaboración
+        $response->assertSee('☽', false);           // planeta (contexto sutil)
 
         Carbon::setTestNow(null);
     }
@@ -115,6 +117,8 @@ class ProximaMeriendaPageTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('Mañana', false);
+        $response->assertSee('Lucía', false);
+        $response->assertSee('Tomás', false);
         $response->assertSee('Cebada', false);
 
         Carbon::setTestNow(null);

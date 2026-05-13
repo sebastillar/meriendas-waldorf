@@ -49,54 +49,67 @@
         <main class="flex-1 flex flex-col justify-center max-w-[480px] w-full mx-auto px-5 py-8">
 
             @if($proximaMerienda)
+                @php
+                    $fechaCarbon = \Carbon\Carbon::parse($proximaMerienda['fecha']);
+                    $nombreFruta  = $proximaMerienda['fruta']['nombre']       ?? '—';
+                    $nombreElab   = $proximaMerienda['elaboracion']['nombre'] ?? '—';
+                @endphp
 
-                {{-- Day label + date --}}
-                <div class="text-center mb-7">
-                    <p class="text-[0.68rem] font-semibold tracking-widest uppercase text-gray-400 mb-1">
+                {{-- Context: etiqueta + date + planet (subtle, small) --}}
+                <div class="mb-8">
+                    <p class="text-[0.65rem] font-semibold tracking-widest uppercase text-gray-400 mb-0.5">
                         {{ $proximaMerienda['etiqueta'] }}
                     </p>
-                    <p class="text-xs text-gray-400">
-                        {{ \Carbon\Carbon::parse($proximaMerienda['fecha'])->locale('es')->isoFormat('dddd D [de] MMMM') }}
+                    <p class="text-xs text-gray-400 capitalize">
+                        {{ $fechaCarbon->locale('es')->isoFormat('dddd D [de] MMMM') }}@if($colorDia)&ensp;<span class="opacity-60">{{ $colorDia['simbolo_planeta'] }}&thinsp;{{ $colorDia['planeta'] }}</span>@endif
                     </p>
                 </div>
 
-                {{-- Cereal — protagonist --}}
-                <div class="text-center mb-4">
-                    <p class="cereal-hero font-bold text-gray-900 tracking-tight">
-                        {{ $proximaMerienda['cereal'] }}
-                    </p>
-                </div>
+                {{-- NAMES — first hierarchy, protagonist --}}
+                <div class="grid grid-cols-2 gap-x-4 gap-y-1 mb-8">
 
-                {{-- Planet --}}
-                @if($colorDia)
-                    <p class="text-center text-sm text-gray-400 mb-7 tracking-wide">
-                        {{ $colorDia['simbolo_planeta'] }}&thinsp;{{ $colorDia['planeta'] }}
-                    </p>
-                @endif
-
-                {{-- Separator --}}
-                <hr class="border-black/10 mb-6">
-
-                {{-- Fruta + Elaboración --}}
-                <div class="space-y-3 mb-6">
-                    <div class="flex items-baseline gap-2 text-sm text-gray-600">
-                        <span>🍎</span>
-                        <span>Fruta &mdash; <strong class="font-semibold text-gray-800">{{ $proximaMerienda['familia_fruta'] ?: '—' }}</strong></span>
+                    {{-- Fruta --}}
+                    <div>
+                        <p class="text-[2rem] font-bold text-gray-900 leading-none tracking-tight break-words">
+                            {{ $nombreFruta }}
+                        </p>
+                        <p class="text-[0.7rem] uppercase tracking-widest text-gray-400 mt-2">
+                            🍎 Fruta
+                        </p>
                     </div>
-                    <div class="flex items-baseline gap-2 text-sm text-gray-600">
-                        <span>👩‍🍳</span>
-                        <span>Elaboración &mdash; <strong class="font-semibold text-gray-800">{{ $proximaMerienda['familia_elaboracion'] ?: '—' }}</strong></span>
+
+                    {{-- Elaboración --}}
+                    <div>
+                        <p class="text-[2rem] font-bold text-gray-900 leading-none tracking-tight break-words">
+                            {{ $nombreElab }}
+                        </p>
+                        <p class="text-[0.7rem] uppercase tracking-widest text-gray-400 mt-2">
+                            👩‍🍳 Elaboración
+                        </p>
+                        @if(($proximaMerienda['cereal'] ?? '') !== '')
+                            <p class="text-sm text-gray-500 font-medium mt-0.5">
+                                {{ $proximaMerienda['cereal'] }}
+                            </p>
+                        @endif
                     </div>
+
                 </div>
+
+                {{-- CTA — third hierarchy --}}
+                <a href="{{ route('agenda.public') }}"
+                   class="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-gray-400 hover:text-gray-700 transition-colors py-2">
+                    Ver agenda semanal&thinsp;→
+                </a>
 
                 {{-- Birthday (conditional) --}}
                 @if($proximoCumpleanos)
-                    <hr class="border-black/10 mb-5">
-                    <p class="text-xs text-gray-400">
-                        🎂 Cumpleaños de
-                        <strong class="font-semibold text-gray-600">{{ $proximoCumpleanos['nombre'] }}</strong>
-                        &middot; {{ $proximoCumpleanos['fecha_formato'] }}
-                    </p>
+                    <div class="mt-6 pt-5 border-t border-black/10">
+                        <p class="text-xs text-gray-400">
+                            🎂 Cumpleaños de
+                            <strong class="font-semibold text-gray-600">{{ $proximoCumpleanos['nombre'] }}</strong>
+                            &middot; {{ $proximoCumpleanos['fecha_formato'] }}
+                        </p>
+                    </div>
                 @endif
 
             @else
