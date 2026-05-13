@@ -13,11 +13,12 @@
                 <div class="flex items-center justify-between flex-wrap gap-2">
                     <div>
                         <h1 class="text-2xl font-semibold">
-                            <a href="{{ route('agenda.public') }}" class="hover:opacity-90">@yield('title', 'Meriendas - Tercer Año')</a>
+                            <a href="{{ route('proxima.merienda') }}" class="hover:opacity-90">@yield('title', 'Meriendas - Tercer Año')</a>
                         </h1>
                         <p class="text-sm opacity-90 text-[#FFE4EC]">Sistema de autogestión</p>
                     </div>
                     <nav class="flex items-center gap-4" aria-label="Navegación principal">
+                        <a href="{{ route('proxima.merienda') }}" class="px-3 py-1.5 rounded text-sm font-medium {{ request()->routeIs('proxima.merienda') ? 'bg-white/20' : 'hover:bg-white/10' }}">Inicio</a>
                         <a href="{{ route('agenda.public') }}" class="px-3 py-1.5 rounded text-sm font-medium {{ request()->routeIs('agenda.public') ? 'bg-white/20' : 'hover:bg-white/10' }}">Agenda</a>
                         <a href="{{ route('resumen.mensual') }}" class="px-3 py-1.5 rounded text-sm font-medium {{ request()->routeIs('resumen.mensual') ? 'bg-white/20' : 'hover:bg-white/10' }}">Resumen mensual</a>
                         <a href="{{ route('cumpleanos.index') }}" class="px-3 py-1.5 rounded text-sm font-medium {{ request()->routeIs('cumpleanos.index') ? 'bg-white/20' : 'hover:bg-white/10' }}">Cumpleaños</a>

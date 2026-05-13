@@ -184,6 +184,80 @@ class AgendaService
     }
 
     /**
+     * Próximo día lectivo con merienda asignada.
+     * Si son antes de las 15:00 se evalúa desde hoy; si no, desde mañana.
+     * Añade 'etiqueta' (Hoy/Mañana/El {día}), 'familia_fruta' y 'familia_elaboracion'.
+     *
+     * @return array{fecha: string, dia: string, cereal: string, fruta: array, elaboracion: array, es_feriado: bool, etiqueta_feriado: string, etiqueta: string, familia_fruta: string, familia_elaboracion: string}|null
+     */
+    public function proximaDiaLectivoConMerienda(): ?array
+    {
+        $ahora = Carbon::now();
+        $hoy = $ahora->copy()->startOfDay();
+        $cursor = $ahora->hour < 15 ? $hoy->copy() : $hoy->copy()->addDay();
+
+        for ($i = 0; $i <= 30; $i++) {
+            $fecha = $cursor->copy()->addDays($i);
+
+            if ($fecha->isWeekend()) {
+                continue;
+            }
+
+            $fila = $this->agendaUnDia($fecha);
+
+            if (!$fila || $fila['es_feriado'] || ($fila['cereal'] ?? '') === '') {
+                continue;
+            }
+
+            $etiqueta = match (true) {
+                $fecha->isSameDay($hoy) => 'Hoy',
+                $fecha->isSameDay($hoy->copy()->addDay()) => 'Mañana',
+                default => 'El ' . ucfirst($fila['dia']),
+            };
+
+            $frutaId = $fila['fruta']['id'] ?? null;
+            $elabId  = $fila['elaboracion']['id'] ?? null;
+            $alumnoFruta = $frutaId ? $this->alumnoRepository->find((int) $frutaId) : null;
+            $alumnoElab  = $elabId  ? $this->alumnoRepository->find((int) $elabId)  : null;
+
+            return array_merge($fila, [
+                'etiqueta'            => $etiqueta,
+                'familia_fruta'       => $alumnoFruta?->familia?->nombre_para_listado ?? '',
+                'familia_elaboracion' => $alumnoElab?->familia?->nombre_para_listado ?? '',
+            ]);
+        }
+
+        return null;
+    }
+
+    /**
+     * Agenda semanal con nombres de familia añadidos a fruta y elaboración.
+     * Cada fila no-feriado tendrá fruta['familia_nombre'] y elaboracion['familia_nombre'].
+     *
+     * @return array<int, array>
+     */
+    public function agendaSemanaConFamilias(?Carbon $fechaInicio = null): array
+    {
+        $filas = $this->agendaSemana($fechaInicio);
+
+        return array_map(function (array $fila): array {
+            if ($fila['es_feriado']) {
+                return $fila;
+            }
+
+            $frutaId = $fila['fruta']['id'] ?? null;
+            $elabId  = $fila['elaboracion']['id'] ?? null;
+            $alumnoFruta = $frutaId ? $this->alumnoRepository->find((int) $frutaId) : null;
+            $alumnoElab  = $elabId  ? $this->alumnoRepository->find((int) $elabId)  : null;
+
+            $fila['fruta']['familia_nombre']       = $alumnoFruta?->familia?->nombre_para_listado ?? '';
+            $fila['elaboracion']['familia_nombre']  = $alumnoElab?->familia?->nombre_para_listado ?? '';
+
+            return $fila;
+        }, $filas);
+    }
+
+    /**
      * Devuelve el rol del alumno en la fecha dada ('fruta', 'elaboracion') o null si no está asignado.
      */
     public function getRolAlumnoEnFecha(int $alumnoId, Carbon $fecha): ?string

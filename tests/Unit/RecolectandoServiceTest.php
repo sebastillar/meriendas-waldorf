@@ -137,5 +137,99 @@ class RecolectandoServiceTest extends TestCase
         $this->assertSame(2, $result[1]['aportaron_count']);
         $this->assertSame(4, $result[1]['total_count']);
     }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // proximoCumpleanosEnProximosDias
+    // ──────────────────────────────────────────────────────────────────────────
+
+    private function buildService(Alumno ...$alumnos): RecolectandoService
+    {
+        $alumnoRepository = $this->createMock(AlumnoRepositoryInterface::class);
+        $alumnoRepository->method('activos')->willReturn(new Collection($alumnos));
+
+        $familiaRepository = $this->createMock(\App\Domain\Repositories\FamiliaRepositoryInterface::class);
+        $familiaRepository->method('activas')->willReturn(new Collection());
+        $familiaRepository->method('todos')->willReturn(new Collection());
+
+        $recolectaAportes = $this->createMock(RecolectaAportesService::class);
+        $recolectaAportes->method('getAlumnoIdsQueAportaron')->willReturn([]);
+        $recolectaAportes->method('alumnosParaAportes')->willReturn([]);
+
+        return new RecolectandoService($alumnoRepository, $familiaRepository, $recolectaAportes);
+    }
+
+    public function test_proximo_cumpleanos_retorna_datos_si_cumpleanos_esta_dentro_del_plazo(): void
+    {
+        // Hoy: 2026-05-11; cumpleaños: 2026-05-20 (9 días → dentro de 30)
+        Carbon::setTestNow(Carbon::create(2026, 5, 11));
+
+        $alumno = new Alumno();
+        $alumno->id = 1;
+        $alumno->nombre = 'Sofía';
+        $alumno->fecha_cumpleanos = Carbon::create(2015, 5, 20);
+
+        $service = $this->buildService($alumno);
+        $result = $service->proximoCumpleanosEnProximosDias(30);
+
+        $this->assertNotNull($result);
+        $this->assertSame('Sofía', $result['nombre']);
+        $this->assertNotEmpty($result['fecha_formato']);
+
+        Carbon::setTestNow(null);
+    }
+
+    public function test_proximo_cumpleanos_retorna_null_si_cumpleanos_fuera_del_plazo(): void
+    {
+        // Hoy: 2026-05-11; cumpleaños: 2026-07-01 (51 días → fuera de 30)
+        Carbon::setTestNow(Carbon::create(2026, 5, 11));
+
+        $alumno = new Alumno();
+        $alumno->id = 1;
+        $alumno->nombre = 'Tomás';
+        $alumno->fecha_cumpleanos = Carbon::create(2015, 7, 1);
+
+        $service = $this->buildService($alumno);
+        $result = $service->proximoCumpleanosEnProximosDias(30);
+
+        $this->assertNull($result);
+
+        Carbon::setTestNow(null);
+    }
+
+    public function test_proximo_cumpleanos_retorna_null_si_no_hay_alumnos_con_fecha(): void
+    {
+        Carbon::setTestNow(Carbon::create(2026, 5, 11));
+
+        $alumnoSinFecha = new Alumno();
+        $alumnoSinFecha->id = 1;
+        $alumnoSinFecha->nombre = 'Sin fecha';
+        $alumnoSinFecha->fecha_cumpleanos = null;
+
+        $service = $this->buildService($alumnoSinFecha);
+        $result = $service->proximoCumpleanosEnProximosDias(30);
+
+        $this->assertNull($result);
+
+        Carbon::setTestNow(null);
+    }
+
+    public function test_proximo_cumpleanos_considera_cumpleanos_del_anio_siguiente_si_ya_paso(): void
+    {
+        // Hoy: 2026-05-11; cumpleaños del año: 2026-04-01 (ya pasó) → próximo: 2027-04-01 (fuera de 30 días)
+        Carbon::setTestNow(Carbon::create(2026, 5, 11));
+
+        $alumno = new Alumno();
+        $alumno->id = 1;
+        $alumno->nombre = 'Martín';
+        $alumno->fecha_cumpleanos = Carbon::create(2015, 4, 1);
+
+        $service = $this->buildService($alumno);
+        $result = $service->proximoCumpleanosEnProximosDias(30);
+
+        // 2027-04-01 está a más de 30 días → null
+        $this->assertNull($result);
+
+        Carbon::setTestNow(null);
+    }
 }
 

@@ -162,6 +162,35 @@ class RecolectandoService
         return $out;
     }
 
+    /**
+     * Próximo cumpleaños dentro de los próximos $dias días.
+     * Retorna null si no hay ninguno en ese plazo o no hay alumnos con fecha cargada.
+     *
+     * @return array{nombre: string, fecha_formato: string}|null
+     */
+    public function proximoCumpleanosEnProximosDias(int $dias = 30): ?array
+    {
+        $hoy = Carbon::today();
+        $alumno = $this->alumnoConProximoCumpleanos();
+
+        if (!$alumno || !$alumno->fecha_cumpleanos) {
+            return null;
+        }
+
+        $cumple = $alumno->fecha_cumpleanos;
+        $esteAnio = Carbon::createFromDate($hoy->year, $cumple->month, $cumple->day);
+        $siguiente = $esteAnio->lt($hoy) ? $esteAnio->copy()->addYear() : $esteAnio;
+
+        if ($hoy->diffInDays($siguiente, false) > $dias) {
+            return null;
+        }
+
+        return [
+            'nombre'        => $alumno->nombre,
+            'fecha_formato' => $siguiente->locale('es')->isoFormat('D [de] MMMM'),
+        ];
+    }
+
     private function alumnoConProximoCumpleanos(): ?Alumno
     {
         $hoy = Carbon::today();

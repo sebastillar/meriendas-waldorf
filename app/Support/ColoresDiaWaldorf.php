@@ -34,11 +34,14 @@ final class ColoresDiaWaldorf
                 'nombre_color' => 'Azul',
                 'cereal' => 'Arroz',
                 'planeta' => 'Luna',
+                'simbolo_planeta' => '☽',
                 'descripcion' => 'Día tranquilo, para empezar despacio',
                 'blob_primary' => 'bg-sky-400/50',
                 'blob_secondary' => 'bg-indigo-300/40',
                 'accent_text' => 'text-sky-900',
                 'border_soft' => 'border-sky-200/80',
+                'bg_tint_css' => 'rgba(56,189,248,0.09)',
+                'border_color_css' => 'rgba(56,189,248,0.55)',
             ],
             [
                 'slug' => 'mar',
@@ -46,11 +49,14 @@ final class ColoresDiaWaldorf
                 'nombre_color' => 'Rojo',
                 'cereal' => 'Cebada',
                 'planeta' => 'Marte',
+                'simbolo_planeta' => '♂',
                 'descripcion' => 'Día con más energía y movimiento',
                 'blob_primary' => 'bg-rose-400/45',
                 'blob_secondary' => 'bg-red-300/35',
                 'accent_text' => 'text-rose-950',
                 'border_soft' => 'border-rose-200/80',
+                'bg_tint_css' => 'rgba(251,113,133,0.09)',
+                'border_color_css' => 'rgba(251,113,133,0.55)',
             ],
             [
                 'slug' => 'mie',
@@ -58,11 +64,14 @@ final class ColoresDiaWaldorf
                 'nombre_color' => 'Amarillo',
                 'cereal' => 'Mijo',
                 'planeta' => 'Mercurio',
+                'simbolo_planeta' => '☿',
                 'descripcion' => 'Día alegre y luminoso',
                 'blob_primary' => 'bg-amber-300/50',
                 'blob_secondary' => 'bg-yellow-200/45',
                 'accent_text' => 'text-amber-950',
                 'border_soft' => 'border-amber-200/80',
+                'bg_tint_css' => 'rgba(252,211,77,0.10)',
+                'border_color_css' => 'rgba(217,119,6,0.45)',
             ],
             [
                 'slug' => 'jue',
@@ -70,11 +79,14 @@ final class ColoresDiaWaldorf
                 'nombre_color' => 'Naranja',
                 'cereal' => 'Centeno',
                 'planeta' => 'Júpiter',
+                'simbolo_planeta' => '♃',
                 'descripcion' => 'Día creativo',
                 'blob_primary' => 'bg-orange-400/45',
                 'blob_secondary' => 'bg-amber-400/35',
                 'accent_text' => 'text-orange-950',
                 'border_soft' => 'border-orange-200/80',
+                'bg_tint_css' => 'rgba(251,146,60,0.09)',
+                'border_color_css' => 'rgba(251,146,60,0.55)',
             ],
             [
                 'slug' => 'vie',
@@ -82,13 +94,28 @@ final class ColoresDiaWaldorf
                 'nombre_color' => 'Verde',
                 'cereal' => 'Avena',
                 'planeta' => 'Venus',
+                'simbolo_planeta' => '♀',
                 'descripcion' => 'Día de naturaleza y calma',
                 'blob_primary' => 'bg-emerald-400/40',
                 'blob_secondary' => 'bg-lime-300/35',
                 'accent_text' => 'text-emerald-950',
                 'border_soft' => 'border-emerald-200/80',
+                'bg_tint_css' => 'rgba(52,211,153,0.09)',
+                'border_color_css' => 'rgba(52,211,153,0.55)',
             ],
         ];
+    }
+
+    /**
+     * Devuelve la info del día Waldorf para un día de la semana de Carbon (1=lun..5=vie).
+     * Retorna null para sábado (6) y domingo (0).
+     */
+    public static function infoPorDiaSemana(int $dow): ?array
+    {
+        if ($dow < 1 || $dow > 5) {
+            return null;
+        }
+        return self::diasSemana()[$dow - 1];
     }
 
     /**
