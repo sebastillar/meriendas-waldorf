@@ -55,13 +55,13 @@
                     $nombreElab   = $proximaMerienda['elaboracion']['nombre'] ?? '—';
                 @endphp
 
-                {{-- Context: etiqueta + date + planet (subtle, small) --}}
+                {{-- Context: etiqueta + date + planet --}}
                 <div class="mb-8">
-                    <p class="text-[0.65rem] font-semibold tracking-widest uppercase text-gray-400 mb-0.5">
+                    <p class="text-2xl font-bold text-gray-800 mb-1">
                         {{ $proximaMerienda['etiqueta'] }}
                     </p>
-                    <p class="text-xs text-gray-400 capitalize">
-                        {{ $fechaCarbon->locale('es')->isoFormat('dddd D [de] MMMM') }}@if($colorDia)&ensp;<span class="opacity-60">{{ $colorDia['simbolo_planeta'] }}&thinsp;{{ $colorDia['planeta'] }}</span>@endif
+                    <p class="text-base text-gray-500 capitalize">
+                        {{ $fechaCarbon->locale('es')->isoFormat('dddd D [de] MMMM') }}@if($colorDia)&ensp;<span class="text-gray-400">{{ $colorDia['simbolo_planeta'] }}&thinsp;{{ $colorDia['planeta'] }}</span>@endif
                     </p>
                 </div>
 
