@@ -42,6 +42,8 @@ final class ColoresDiaWaldorf
                 'border_soft' => 'border-sky-200/80',
                 'bg_tint_css' => 'rgba(56,189,248,0.09)',
                 'border_color_css' => 'rgba(56,189,248,0.55)',
+                'tag_bg_css' => 'rgba(56,189,248,0.16)',
+                'tag_text_css' => '#0369a1',
             ],
             [
                 'slug' => 'mar',
@@ -57,6 +59,8 @@ final class ColoresDiaWaldorf
                 'border_soft' => 'border-rose-200/80',
                 'bg_tint_css' => 'rgba(251,113,133,0.09)',
                 'border_color_css' => 'rgba(251,113,133,0.55)',
+                'tag_bg_css' => 'rgba(251,113,133,0.16)',
+                'tag_text_css' => '#9f1239',
             ],
             [
                 'slug' => 'mie',
@@ -72,6 +76,8 @@ final class ColoresDiaWaldorf
                 'border_soft' => 'border-amber-200/80',
                 'bg_tint_css' => 'rgba(252,211,77,0.10)',
                 'border_color_css' => 'rgba(217,119,6,0.45)',
+                'tag_bg_css' => 'rgba(252,211,77,0.28)',
+                'tag_text_css' => '#78350f',
             ],
             [
                 'slug' => 'jue',
@@ -87,6 +93,8 @@ final class ColoresDiaWaldorf
                 'border_soft' => 'border-orange-200/80',
                 'bg_tint_css' => 'rgba(251,146,60,0.09)',
                 'border_color_css' => 'rgba(251,146,60,0.55)',
+                'tag_bg_css' => 'rgba(251,146,60,0.18)',
+                'tag_text_css' => '#9a3412',
             ],
             [
                 'slug' => 'vie',
@@ -102,6 +110,8 @@ final class ColoresDiaWaldorf
                 'border_soft' => 'border-emerald-200/80',
                 'bg_tint_css' => 'rgba(52,211,153,0.09)',
                 'border_color_css' => 'rgba(52,211,153,0.55)',
+                'tag_bg_css' => 'rgba(52,211,153,0.16)',
+                'tag_text_css' => '#065f46',
             ],
         ];
     }

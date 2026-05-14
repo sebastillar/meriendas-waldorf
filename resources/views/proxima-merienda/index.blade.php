@@ -50,58 +50,69 @@
 
             @if($proximaMerienda)
                 @php
-                    $fechaCarbon = \Carbon\Carbon::parse($proximaMerienda['fecha']);
+                    $fechaCarbon  = \Carbon\Carbon::parse($proximaMerienda['fecha']);
                     $nombreFruta  = $proximaMerienda['fruta']['nombre']       ?? '—';
                     $nombreElab   = $proximaMerienda['elaboracion']['nombre'] ?? '—';
+                    $cereal       = $proximaMerienda['cereal'] ?? '';
+                    $tagBg        = $colorDia['tag_bg_css']   ?? 'rgba(0,0,0,0.06)';
+                    $tagText      = $colorDia['tag_text_css'] ?? '#374151';
                 @endphp
 
-                {{-- Context: etiqueta + date + planet --}}
-                <div class="mb-8">
-                    <p class="text-2xl font-bold text-gray-800 mb-1">
-                        {{ $proximaMerienda['etiqueta'] }}
-                    </p>
-                    <p class="text-base text-gray-500 capitalize">
-                        {{ $fechaCarbon->locale('es')->isoFormat('dddd D [de] MMMM') }}@if($colorDia)&ensp;<span class="text-gray-400">{{ $colorDia['simbolo_planeta'] }}&thinsp;{{ $colorDia['planeta'] }}</span>@endif
-                    </p>
+                {{-- Etiqueta: Hoy / Mañana / El jueves --}}
+                <p class="text-2xl font-bold text-gray-800 mb-3">
+                    {{ $proximaMerienda['etiqueta'] }}
+                </p>
+
+                {{-- Tags: fecha + planeta --}}
+                <div class="flex flex-wrap gap-2 mb-8">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium capitalize"
+                          style="background-color:{{ $tagBg }}; color:{{ $tagText }};">
+                        {{ $fechaCarbon->locale('es')->isoFormat('ddd D [de] MMMM') }}
+                    </span>
+                    @if($colorDia)
+                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium"
+                              style="background-color:{{ $tagBg }}; color:{{ $tagText }};">
+                            {{ $colorDia['simbolo_planeta'] }}&thinsp;{{ $colorDia['planeta'] }}
+                        </span>
+                    @endif
                 </div>
 
-                {{-- NAMES — first hierarchy, protagonist --}}
-                <div class="grid grid-cols-2 gap-x-4 gap-y-1 mb-8">
+                {{-- NOMBRES — primera jerarquía --}}
+                <div class="grid grid-cols-2 gap-x-6 mb-8">
 
                     {{-- Fruta --}}
-                    <div>
+                    <div class="flex flex-col gap-2">
                         <p class="text-[2rem] font-bold text-gray-900 leading-none tracking-tight break-words">
                             {{ $nombreFruta }}
                         </p>
-                        <p class="text-[0.7rem] uppercase tracking-widest text-gray-400 mt-2">
-                            🍎 Fruta
-                        </p>
+                        <span class="text-3xl leading-none">🍎</span>
                     </div>
 
                     {{-- Elaboración --}}
-                    <div>
+                    <div class="flex flex-col gap-2">
                         <p class="text-[2rem] font-bold text-gray-900 leading-none tracking-tight break-words">
                             {{ $nombreElab }}
                         </p>
-                        <p class="text-[0.7rem] uppercase tracking-widest text-gray-400 mt-2">
-                            👩‍🍳 Elaboración
-                        </p>
-                        @if(($proximaMerienda['cereal'] ?? '') !== '')
-                            <p class="text-sm text-gray-500 font-medium mt-0.5">
-                                {{ $proximaMerienda['cereal'] }}
-                            </p>
-                        @endif
+                        <div class="flex items-center gap-2">
+                            <span class="text-3xl leading-none">👩‍🍳</span>
+                            @if($cereal !== '')
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-semibold"
+                                      style="background-color:{{ $tagBg }}; color:{{ $tagText }};">
+                                    {{ $cereal }}
+                                </span>
+                            @endif
+                        </div>
                     </div>
 
                 </div>
 
-                {{-- CTA — third hierarchy --}}
+                {{-- CTA — tercera jerarquía --}}
                 <a href="{{ route('agenda.public') }}"
-                   class="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-gray-400 hover:text-gray-700 transition-colors py-2">
+                   class="inline-flex items-center gap-1.5 text-xs font-semibold tracking-widest uppercase text-gray-400 hover:text-gray-700 transition-colors py-2">
                     Ver agenda semanal&thinsp;→
                 </a>
 
-                {{-- Birthday (conditional) --}}
+                {{-- Cumpleaños (condicional) --}}
                 @if($proximoCumpleanos)
                     <div class="mt-6 pt-5 border-t border-black/10">
                         <p class="text-xs text-gray-400">

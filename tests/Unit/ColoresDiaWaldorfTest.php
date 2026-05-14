@@ -32,9 +32,13 @@ class ColoresDiaWaldorfTest extends TestCase
             $this->assertArrayHasKey('simbolo_planeta', $dia, "Falta simbolo_planeta en {$dia['slug']}");
             $this->assertArrayHasKey('bg_tint_css', $dia, "Falta bg_tint_css en {$dia['slug']}");
             $this->assertArrayHasKey('border_color_css', $dia, "Falta border_color_css en {$dia['slug']}");
+            $this->assertArrayHasKey('tag_bg_css', $dia, "Falta tag_bg_css en {$dia['slug']}");
+            $this->assertArrayHasKey('tag_text_css', $dia, "Falta tag_text_css en {$dia['slug']}");
             $this->assertNotEmpty($dia['simbolo_planeta'], "simbolo_planeta vacío en {$dia['slug']}");
             $this->assertStringStartsWith('rgba(', $dia['bg_tint_css'], "bg_tint_css inválido en {$dia['slug']}");
             $this->assertStringStartsWith('rgba(', $dia['border_color_css'], "border_color_css inválido en {$dia['slug']}");
+            $this->assertStringStartsWith('rgba(', $dia['tag_bg_css'], "tag_bg_css inválido en {$dia['slug']}");
+            $this->assertStringStartsWith('#', $dia['tag_text_css'], "tag_text_css inválido en {$dia['slug']}");
         }
     }
 

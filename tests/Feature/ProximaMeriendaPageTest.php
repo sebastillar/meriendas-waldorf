@@ -80,12 +80,13 @@ class ProximaMeriendaPageTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('Hoy', false);
-        $response->assertSee('Lucía', false);      // nombre del niño — primera jerarquía
-        $response->assertSee('Tomás', false);       // nombre del niño — primera jerarquía
-        $response->assertSee('Fruta', false);       // rol
-        $response->assertSee('Elaboración', false); // rol
-        $response->assertSee('Arroz', false);       // cereal junto a elaboración
-        $response->assertSee('☽', false);           // planeta (contexto sutil)
+        $response->assertSee('Lucía', false);  // nombre del niño — primera jerarquía
+        $response->assertSee('Tomás', false);  // nombre del niño — primera jerarquía
+        $response->assertSee('Arroz', false);  // cereal como tag junto a 👩‍🍳
+        $response->assertSee('☽', false);      // planeta en tag
+        // "Fruta" y "Elaboración" ya no aparecen como texto: solo los emojis 🍎 👩‍🍳
+        $response->assertDontSee('>Fruta<', false);
+        $response->assertDontSee('>Elaboración<', false);
 
         Carbon::setTestNow(null);
     }
